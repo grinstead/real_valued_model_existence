@@ -1,0 +1,2025 @@
+%------------------------------------------------------------------------------
+% Beginning of journal.tex
+%------------------------------------------------------------------------------
+%
+% AMS-LaTeX version 2 sample file for journals, based on amsart.cls.
+%
+%        ***     DO NOT USE THIS FILE AS A STARTER.      ***
+%        ***  USE THE JOURNAL-SPECIFIC *.TEMPLATE FILE.  ***
+%
+% Replace amsart by the documentclass for the target journal, e.g., tran-l.
+%
+\documentclass{amsart}
+
+\usepackage{graphicx}
+\usepackage{enumitem}
+\usepackage[mathscr]{euscript}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage{proof}
+\usepackage{cite}
+\usepackage[toc,page]{appendix}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{remark}[theorem]{Remark}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{notation}[theorem]{Notation}
+\newtheorem{example}[theorem]{Example}
+
+\renewcommand{\descriptionlabel}[1]{\hspace\labelsep\normalfont\itshape #1:}
+
+\numberwithin{equation}{theorem}
+
+\renewcommand{\phi}{\varphi}
+\renewcommand{\epsilon}{\varepsilon}
+
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\V}{\mathbf}
+\newcommand{\restrict}[2]{{#1\restriction#2}}
+\newcommand{\powerset}[1]{\wp(#1)}
+\newcommand{\where}{\mid}
+\newcommand{\unvee}{{\vee}}
+\newcommand{\unwedge}{{\wedge}}
+\newcommand{\proves}{\vdash}
+
+\newcommand{\strict}[1]{{\left\lfloor#1\right\rfloor}}
+\newcommand{\lrarr}{\leftrightarrow}
+\newcommand{\rat}[1]{{\overline{#1}}}
+\newcommand{\num}[1]{{\bar{\bar{#1}}}}
+%\newcommand{\narrow}[1]{\to^{(#1)}}
+\newcommand{\narrow}[1]{\xrightarrow{#1}}
+\renewcommand{\to}{\narrow{}}
+\newcommand{\len}{\ell}
+
+\newcommand{\arr}{{\to}}
+\newcommand{\intro}{\!\operatorname{I}}
+\newcommand{\elim}{\!\operatorname{E}}
+\newcommand{\trans}{\text{\sc{Trans}}}
+\newcommand{\aref}[1]{\!\text{\ref{itm:axiom-#1}}}
+\newcommand{\ordef}{\unvee\text{\sc{Def}}}
+\newcommand{\swap}{\text{\sc{Swap}}}
+\newcommand{\pushdown}{\arr\text{\sc{Manip}}}
+\newcommand{\generalization}{\text{\sc{Gen}}}
+
+\newcommand{\baselang}{\operatorname{L}}
+\newcommand{\lang}{\baselang_{\omega_1\omega}}
+\newcommand{\Tskolem}{{T_\text{Sk}}}
+\newcommand{\frag}{\mathcal{L}}
+\newcommand{\fragsk}{\frag_{\text{Sk}}}
+\newcommand{\skolem}[2]{F_{{#1},{#2}}}
+
+
+\newenvironment{claim}[1]{\vspace{.07in}\par\noindent\emph{Claim #1.}\space}{}
+\newenvironment{claimproof}{\vspace{.07in}\par\noindent\emph{Proof of Claim.}\space}{\hfill \emph{End of Claim.}}
+
+\begin{document}
+
+\title{Model Existence for $[0,1]$-Valued Logic}
+
+\author{Joe Grinstead}
+
+%    Address of record for the research reported here
+\address{Department of Mathematics, CMU}
+%    Current address
+\curraddr{Department of Mathematics, CMU}
+
+\email{jgrinste@andrew.cmu.edu}
+%    \thanks will become a 1st page footnote.
+%\thanks{The first author was supported in part by NSF Grant \#000000.}
+
+%    Information for second author
+%\author{Author Two}
+%\address{Mathematical Research Section, School of Mathematical Sciences,
+%Australian National University, Canberra ACT 2601, Australia}
+%\email{two@maths.univ.edu.au}
+%\thanks{Support information for the second author.}
+
+%    General info
+%\subjclass[2000]{Primary 54C40, 14E20; Secondary 46E25, 20C20}
+
+\date{\today}
+
+%\dedicatory{This paper is dedicated to our advisors.}
+
+%\keywords{Differential geometry, algebraic geometry}
+
+\begin{abstract}
+	We explore a $[0,1]$-valued analogue of the logic $\lang$.
+	The core result of this paper is an adaptation of the model existence theorem to this logic.
+	From there we prove versions of completeness, establish the Hanf number to be $\beth_{\omega_1}$, and prove Morley's two-cardinal theorem.
+	Finally, we show how these results apply to continuous logic.
+\end{abstract}
+
+\maketitle
+\tableofcontents
+\newpage
+
+\section*{Introduction}
+In this paper, we study an infinitary logic that takes truth values in $[0,1]$.
+The investigation originally focused on the logic defined in~\cite{eagle2014omitting}, which is an infinitary first-order logic with continuity assumptions useful for functional analysis; however, we found that removing the continuity requirements allowed us to adapt more traditional model theoretic proofs to the logic.
+Fortunately, our new logic is expressive enough to give results for the continuous case as well, so much so that we achieve completeness, the Hanf-number, and Morley's two-cardinal theorem for both the general logic and continuous logic.
+Interestingly, by ignoring continuity, our logic is closer in spirit to so-called ``fuzzy logic,'' which is a field that developed independently (and largely before) continuous first-order.
+Both fields have the same genesis, so it is perhaps pleasing that they have grown close enough once more to both be an influence on this paper.
+
+Historically, the origin of both fields can be traced back to 1918, when Polish logician Jan {\L}ukasiewicz gave a talk~\cite{lukasiewicz1918farewell} reflecting on his work on a three-valued logic in which sentences could be true, false, or possible.
+By 1930, {\L}ukasiewicz, in collaboration with Tarski, expanded the possible truth-values to all of $[0,1]$ (where 0 corresponds to false and 1 to true).
+Chang's 1950s papers~\cite{chang1958algebraic,chang1959new} defined the notion of an MV-algebra (standing for ``Multi-Valued'') for studying the semantics of {\L}ukasiewicz's logic and used the concept to attain an algebraic proof of completeness.
+
+Chang and Kiesler together published ``Continuous Model Theory''~\cite{chang1966continuous} in the 1960s.
+Their definitions went beyond $[0,1]$ into well-behaved compact Hausdorff spaces (of which $[0,1]$ is the canonical example) and generalized connectives to be any continuous function.
+After publishing the book, Chang and Kiesler explored other topics, and the field of continuous logic calmed down.
+This century has marked a strong interest in the field, particularly after Ben Yaacov and Usvyatsov in~\cite{ben2010continuous} showed Henson's logic for Banach spaces\footnote{See~\cite{henson2002ultraproducts} more information about Henson's logic.} could be reformulated towards a logic closer to Chang and Kiesler's, which they refer to as ``Continuous First-Order Logic.''
+For a full, self-contained text on the subject, see~\cite{yaacov2008model}.
+
+While continuous logic was relatively quiet from the 1970s until the late 1990s, the field of fuzzy logic exploded in popularity.
+Despite their name, fuzzy logics are based on formal and precise deduction; it is the \emph{statements} which are being examined that are fuzzy.
+Zadeh introduced the term ``fuzzy'' in~\cite{zadeh1965fuzzy} to describe \emph{fuzzy sets}: sets where membership is a value from 0 to 1 instead of simply in or not.
+Goguen was the first to create a fuzzy logic in~\cite{goguen1969logic}, which he called the ``logic of inexact concepts.''
+Though fuzzy logic was popular (Zadeh's original paper is cited nearly 50,000 times!), its main audience seems to have been engineers developing control systems.
+As such, the majority of fuzzy logic paper are not very mathematically deep, causing fuzzy logics to get a poor reputation within the mathematics community.
+To counter this perception and show that fuzzy logic does indeed have ``well developed formal foundations,'' Petr H\'ajek published ``Metamathematics of Fuzzy Logic''~\cite{hajek1998metamathematics}.
+
+One of the main logics in fuzzy logic is {\L}ukasiewicz logic, inspired of course by the work of {\L}ukasiewicz mentioned earlier.
+Pavelka published a series of articles on fuzzy logic~\cite{pavelka1979fuzzy} where he expanded {\L}ukasiewicz logic to include a relational constant for each number in $[0,1]$. The downside to this approach is that the language becomes uncountable; however, H\'ajek~\cite{hajek1995fuzzy} demonstrated that adding a symbol for each \emph{rational} in $[0,1]$ was a powerful alternative that kept the language countable.
+It is from this Pavelka-{\L}ukasiewicz logic that we derive the infinitary logic used in this paper.
+
+This paper is self-contained with respect to fuzzy and continuous logic; however, we assume the reader has seen some logic and model theory before.
+Notationally, we have chosen to err on the side of fuzzy logicians, as in \cite{hajek1998metamathematics} and \cite{metcalfe2008proof}, rather than the notation used in \cite{yaacov2008model} because the fuzzy logic notation makes the connections to classical logic more clear.
+\section{Definitions, Concepts, and Notation}
+\begin{definition}
+  A \emph{signature} consists of a set of function symbols (each with an associated finite arity), a set of relation symbols (again with associated finite arity), and a set of constant symbols.
+  A \emph{countable signature} contains only countably many symbols.
+  The notion of \emph{term}, \emph{atomic formula}, and \emph{free-variable} are the same as in classical first-order logic.
+  A \emph{closed term} is a term with no free-variables.
+\end{definition}
+\begin{definition}
+  For a given signature $S$, we define the set of formulas $\lang(S)$ recursively as:
+  \begin{itemize}
+  \item Every atomic formula of $S$ is in $\lang(S)$.
+  \item For each $q\in\Q\cap[0,1]$, the formula $\rat q$ is in $\lang(S)$.
+  \item For each $\phi$ and $\psi$ in $\lang(S)$, the formula $\phi\to\psi$ is in $\lang(S)$.
+  \item For each countable set of formulas $\Phi$ in $\lang(S)$, if the formulas in $\Phi$ together reference only finitely many free-variables, then the formula $\unwedge\Phi$ and $\unvee\Phi$ is in $\lang(S)$.
+  \item For each $\phi$ in $\lang(S)$, the formulas $\forall x\,\phi$ and $\exists x\,\phi$ are in $\lang(S)$.
+  \end{itemize}
+  Of course, we let $x$ be any of countably many free-variable symbols in that last rule.
+  Additionally, the set of formulas $\baselang(S)$ is defined in the same way, except that conjunction and disjunction are restricted to pairs of formulas instead of countable sets.
+  A \emph{sentence} is a formula with no free-variables.
+\end{definition}
+\begin{notation}
+  When the signature is unambiguous, we write $\baselang$ and $\lang$ instead of $\baselang(S)$ and $\lang(S)$, respectively.
+  Many times in this section, the signature does not matter and so a result or definition will be stated without reference to a signature; in those cases, one should understand there to be an implicitly fixed and arbitrary signature.
+\end{notation}
+\begin{notation}
+  For any rational, we opt to distinguish the number itself from its corresponding nullary relation by putting a bar over the rational (eg. $\rat q$ instead of $q$ or $\rat 0$ instead of $0$).
+  This notation is useful and is utilized throughout~\cite{hajek1998metamathematics}; however, it prevents us from using the bar to mean a tuple.
+  Our solution is to use bold-face variables (eg. $\V a$ and $\V x$) for finite tuples (we never have infinite tuples in this paper).
+\end{notation}
+\begin{notation}
+  For any tuple $\V x$, we take $\len(\V x)$ to be the length of $\V x$.
+\end{notation}
+At this point, we have defined the syntax of our logic, but have yet to define its semantics.
+The following definition is how we interpret the arrow connective.
+While at first it may seem unnatural, it is fundamentally powerful, as demonstrated later in Theorem~\ref{thm:expressive-logic}.
+\begin{definition}
+  The \emph{{\L}ukasiewicz implication} is the function `$\Rightarrow$'$:[0,1]^2\to[0,1]$, written in infix notation, defined for all $x,y\in[0,1]$ as
+  \[
+    (x\Rightarrow y) := \min\{1-x+y,\ 1\}.
+  \]
+\end{definition}
+\begin{remark}
+  For any $x,y\in[0,1]$, the value of $x\Rightarrow y$ is 1 if and only if $x\leq y$.
+  In particular, for all $x\in[0,1]$, both $0\Rightarrow x$ and $x\Rightarrow 1$ are 1.
+\end{remark}
+\begin{definition}
+  For any signature $S$, the definition of an $S$-structure is the same as for classical first-order logic except that the codomain of relations is $[0,1]$ instead of $\{0,1\}$.
+  We will use script letters for structures (eg. $\mathcal M$ and $\mathcal N$), roman letters for their elements (eg. $M$ and $N$), and superscripts to indicate the interpretation of functions and relations (eg. $R^\mathcal M$ for the interpretation of $R$ in $\mathcal M$).
+\end{definition}
+\begin{definition}
+  Let $S$ be a signature and $\mathcal M$ a $S$-structure.
+  For each formula $\phi(\V x)$ in $\lang(S)$ and tuple $\V a\in M^{\len(\V x)}$ (meaning $\V a$ is a tuple of elements in $\mathcal M$ that has the same length as $\V x$), define the \emph{truth-value} of $\phi[\V a]$ in $\mathcal M$, written $\phi^\mathcal M(\V a)$, recursively as:
+  \begin{itemize}
+  \item If $\phi(\V x)$ is of the form $R(\V x)$, where $R$ is a relation, then $\phi^\mathcal M(\V a):=R^\mathcal M(\V a)$.
+  \item If $\phi(\V x)$ is of the form $\rat p$, where $p\in\Q\cap[0,1]$, then $\phi^\mathcal M(\V a):=p$.
+  \item If $\phi(\V x)$ is of the form $\psi(\V x)\to\chi(\V x)$, then $\phi^\mathcal M(\V a):=(\psi^\mathcal M(\V a)\Rightarrow\chi^\mathcal M(\V a))$.
+  \item If $\phi(\V x)$ is of the form $\bigwedge_{\psi\in\Psi}\psi(\V x)$, then $\phi^\mathcal M(\V a):=\inf\{\psi^\mathcal M(\V a)\where \psi\in\Psi\}$.
+  \item If $\phi(\V x)$ is of the form $\bigvee_{\psi\in\Psi}\psi(\V x)$, then $\phi^\mathcal M(\V a):=\sup\{\psi^\mathcal M(\V a)\where \psi\in\Psi\}$.
+  \item If $\phi(\V x)$ is of the form $\forall y\,\psi(\V x;y)$, then $\phi^\mathcal M(\V a):=\inf\{\psi^\mathcal M(\V a;b)\where b\in M\}$
+  \item If $\phi(\V x)$ is of the form $\exists y\,\psi(\V x;y)$, then $\phi^\mathcal M(\V a):=\sup\{\psi^\mathcal M(\V a;b)\where b\in M\}$
+  \end{itemize}
+  In addition, for any formula $\phi$ with $n$ free-variables for some $n<\omega$, we define
+  \[
+    \phi^\mathcal M:=\inf\{\phi^\mathcal M(\V a)\where \V a\in M^n\}.
+  \]
+\end{definition}
+\begin{definition}
+  For any structure $\mathcal M$ and formula $\phi$, we say $\mathcal M\models\phi$ iff $\phi^\mathcal M=1$.
+  This means for that $\mathcal M\models\phi\to\psi$ for formulas $\phi$ and $\psi$ iff $\phi^\mathcal M\leq\psi^\mathcal M$.
+\end{definition}
+\begin{remark}\label{rem:issues}
+  The semantic definition of $\unwedge$, $\unvee$, $\forall$, and $\exists$ as infs and sups should be relatively intuitive.
+  Unfortunately, these definitions can (and do) create difficulties, two in particular:
+  \begin{itemize}
+  \item 
+    It's possible for $\bigvee_{\psi\in\Psi}\psi$ to be true (ie. evaluates to 1) without any of $\psi\in\Psi$ being true.
+    The same problem exists for $\exists x\,\psi(x)$, as it may be true without being witnessed.
+  \item
+    Proof-theoretically, the $\wedge$ connective does not coordinate too well with the $\to$ connective; consider that the formula $(\phi\wedge\psi)\to\chi$ is not necessarily the same as $\phi\to(\psi\to\chi)$ and that $\phi\to\psi$ is not expressible with the $\wedge$ and $\neg$ (defined in Notation~\ref{not:shorthand}) symbols.
+  \end{itemize}
+  The first problem is tackled by observing that if $\unwedge\Psi$ is true, then for every rational $p\in\Q\cap[0,1]$ that is \emph{strictly} below 1, there is a formula $\psi$ that has a truth-value greater than $p$.
+  The second problem is not an issue in fuzzy logic, as fuzzy logicians use an additional type of conjunction called a ``t-norm'' that works well with the $\to$ connective.
+  The t-norm, though, is not a truly natural concept when doing model theory, so we opt not to include it in this work.
+\end{remark}
+\begin{notation}\label{not:shorthand}
+  Throughout this paper, we use the following shorthand for any formulas $\phi$ and $\psi$:
+  \begin{itemize}
+  \item $\neg\phi$ represents $\phi\to\rat 0$.
+  \item $\phi\wedge\psi$ represents $\unwedge\{\phi,\psi\}$.
+  \item $\phi\vee\psi$ represents $\unvee\{\phi,\psi\}$.
+  \item $\phi\leftrightarrow\psi$ represents $(\phi\to\psi)\wedge(\psi\to\phi)$.
+  \end{itemize}
+\end{notation}
+\begin{remark}
+  Finite conjunction and disjunction are derivable with the $\to$ connective, so many authors take finite conjunction and disjunction as shorthand as well, though we do not do so here.
+\end{remark}
+\begin{remark}
+  For any formulas $\phi$ and $\psi$ and structure $\mathcal M$, the truth-value of $\neg\phi$ and $\phi\leftrightarrow\psi$ are
+  \[
+    [\neg\phi]^\mathcal M=1-\phi^\mathcal M\quad\quad\text{and}\quad\quad [\phi\leftrightarrow\psi]^\mathcal M=1-|\phi^\mathcal M-\psi^\mathcal M|.
+  \]
+\end{remark}
+\begin{definition}
+  For any formulas $\phi$ and $\psi$, we take $\phi\equiv\psi$ to mean they have the same truth-value in all structures.
+\end{definition}
+\begin{remark}
+Infinitary logics need ways to manipulate and argue about their infinitary sentences.
+  In classical logic, Demorgan's laws give that for any countable set of formulas $\Phi$:
+  \begin{align*}
+    \neg\bigvee_{\phi\in\Phi}\phi &\equiv \bigwedge_{\phi\in\Phi}\neg\phi&
+    &\text{and}&
+    \neg\bigwedge_{\phi\in\Phi}\phi &\equiv \bigvee_{\phi\in\Phi}\neg\phi
+  \end{align*}
+  and while we're at it, we observe that for any formula $\phi(x)$:
+  \begin{align*}
+    \neg\exists x\,\phi(x) &\equiv \forall x\,\neg\phi(x)&
+    &\text{and}&
+    \neg\forall x\,\phi(x) &\equiv \exists x\,\neg\phi(x)
+  \end{align*}
+  These manipulations were found to be fundamental to studying classical $\lang$.
+  Unfortunately, as brought up in Remark~\ref{rem:issues}, the $\neg$ symbol is not very powerful in our logic.
+  Instead, we must focus our attention on the $\to$ symbol, which has a similar set of equivalences (where $\psi$ is a formula and $\Phi$ is a countable set of formulas):
+  \begin{align}\label{eqn:arrow-manip}
+    \Big(\bigvee_{\phi\in\Phi}\phi\Big)\to\psi&\equiv \bigwedge_{\phi\in\Phi}(\phi\to\psi)\\
+    \Big(\bigwedge_{\phi\in\Phi}\phi\Big)\to\psi&\equiv \bigvee_{\phi\in\Phi}(\phi\to\psi)\\
+    \psi\to\Big(\bigvee_{\phi\in\Phi}\phi\Big)&\equiv \bigvee_{\phi\in\Phi}(\psi\to\phi)\\
+    \psi\to\Big(\bigwedge_{\phi\in\Phi}\phi\Big)&\equiv \bigwedge_{\phi\in\Phi}(\psi\to\phi)
+  \end{align}
+  and (where $\phi(x)$ and $\psi$ are formulas such that $x$ is not free in $\psi$):
+  \begin{align}
+    (\exists x\,\phi(x))\to\psi &\equiv \forall x\,(\phi(x)\to\psi)\\
+    (\forall x\,\phi(x))\to\psi &\equiv \exists x\,(\phi(x)\to\psi)\\
+    \psi\to(\exists x\,\phi(x)) &\equiv \exists x\,(\psi\to\phi(x))\\
+    \psi\to(\forall x\,\phi(x)) &\equiv \forall x\,(\psi\to\phi(x))\label{eqn:arrow-manip-end}
+  \end{align}
+\end{remark}
+The labeled equivalences above give us an important definition that is original to this paper: \emph{arrow-manipulations}.
+\begin{definition}\label{def:arrow-manipulation}
+  Let $\phi$ and $\psi$ be formulas.
+  We say that $\psi$ is an \emph{arrow-manipulation} of $\phi$ (and $\phi$ an arrow-manipulation of $\psi$) if $\phi\equiv\psi$ is one of the equivalences described by \eqref{eqn:arrow-manip} through \eqref{eqn:arrow-manip-end}.
+  For example, if $\phi$ is of the form $\forall x(\chi_1\to\chi_2(x))$ and $\psi$ is of the form $\chi_1\to(\forall x\,\chi_2(x))$, then $\phi$ and $\psi$ are arrow-manipulations of each other because of equivalence~\eqref{eqn:arrow-manip-end}
+\end{definition}
+\begin{remark}
+  The notion of an arrow-manipulation is critical to the completeness section, which necessitates adding them to our notion of fragment (which is designed to serve the same purpose as the notion of fragment for $\lang$), defined below this remark.
+  In this way, we differ from~\cite{eagle2014omitting}, which did not include arrow-manipulations in the fragment.
+\end{remark}
+  \begin{definition}\label{def:fragment}
+    A set of formulas $\mathcal L$ is called a \emph{fragment} of $L_{\omega_1,\omega}$ if all the following hold:
+    \begin{itemize}
+    \item $\mathcal L$ contains all atomic formulas and rational connectives.
+    \item $\mathcal L$ is closed under substituting terms and variables.
+    \item $\mathcal L$ is closed under $\rightarrow$, $\forall$, $\exists$, and finite $\wedge$ and $\vee$.
+    \item If $\phi\in\mathcal L$, then all subformulas of $\phi$ are in $\mathcal L$.
+    \item If $\phi\in\mathcal L$, then all arrow-manipulations of $\phi$ are in $\mathcal L$.
+    \end{itemize}
+  \end{definition}
+\begin{remark}
+  For any countable set of formulas, there is a countable fragment containing that set.
+\end{remark}
+\begin{remark}
+  One of the most striking differences between classical and {\L}ukasiewicz logic is that for formulas $\phi$ and $\psi$, the following may hold:
+  \[
+    \phi\to\psi\not\equiv \phi\to(\phi\to\psi)
+  \]
+  Indeed, for any structure $\mathcal M$, we see by invoking definitions that
+  \begin{align*}
+    &&[\phi\to\psi]^\mathcal M&=\min\{1-\phi^\mathcal M+\psi^\mathcal M,\ 1\}\\
+    \text{and}&&[\phi\to(\phi\to\psi)]^\mathcal M&=\min\{2(1-\phi^\mathcal M)+\psi^\mathcal M,\ 1\}.
+  \end{align*}
+  The concept of contraction \emph{failing} is not initially intuitive; however, contraction fails only if the hypothesis is not 1, so the intuition is that invoking a faulty assumption twice is more questionable than invoking it once.
+  The lack of contraction is a real problem though, beyond the intuition issue, as it invalidates the classical deduction theorem.
+  To accommodate, we are forced to add new notation that will be used heavily in and after the completeness section.
+\end{remark}
+\begin{notation}\label{not:strict}
+  For any $n<\omega$ and formulas $\phi$ and $\psi$, we write $\phi\narrow n\psi$ to mean the formula:
+  \[
+    \underbrace{\phi\to\phi\to\cdots\to\phi\to\phi}_\text{$n$ times}\to\psi
+  \]
+  Note that for this definition we take `$\to$' to be right-associative, so that $\phi\narrow3\psi$ represents $\phi\to(\phi\to(\phi\to\psi))$.
+  Note as well that $\phi\narrow 0\psi$ is just $\psi$.
+  In addition, for any formula $\phi$, we write $\strict\phi$ to mean the formula:
+  \[
+    \bigwedge_{n<\omega}\neg(\phi\narrow n\rat 0)
+  \]
+\end{notation}
+\begin{remark}
+  For any $n<\omega$, structure $\mathcal M$, and formulas $\phi$ and $\psi$ with no shared free-variables, the truth-value of $\phi\narrow n\psi$ in $\mathcal M$ is $\min\{n(1-\phi^\mathcal M)+\psi^\mathcal M,\ 1\}$.
+\end{remark}
+\begin{remark}\label{rem:context-chain}
+  Consider any structure $\mathcal M$.
+  For any formula $\phi$, if $\phi^\mathcal M\neq 1$, then there is some $n<\omega$ such that $n(1-\phi^\mathcal M)\geq 1$, which implies $[\neg(\phi\narrow n\rat 0)]^\mathcal M=1$.
+  This means that for any formula $\phi$,
+  \[
+    \strict{\phi}^\mathcal M=\lfloor\phi^\mathcal M\rfloor,
+  \]
+  which thus explains the chosen notation.
+\end{remark}
+We now end this section with a theorem that was promised before the definition of {\L}ukasiewicz implication, and is included here merely to demonstrate the expressiveness of the language.
+Note that this is the only measure-theoretic idea in the paper and may be skipped, so we do not give background in this paper on the concepts used.
+\begin{theorem}\label{thm:expressive-logic}
+  Fix $n<\omega$ and let $S$ be a signature with nullary relations $R_1,\dots,R_n$.
+  For every Borel-measurable function $f:[0,1]^n\to[0,1]$, there is an $\lang(S)$-sentence $\phi$ such that for all $\V x\in[0,1]^n$, $f(\V x)=\phi^\mathcal M$ in all models $\mathcal M$ satisfying $R^\mathcal M_i=x_i$ for $i\in\{1,\dots,n\}$.
+  \begin{proof}
+    For simplicity, we assume $n=1$ and write $R$ instead of $R_1$.
+    
+    For any $p,q\in\Q\cap[0,1]$ define the formula $\chi_{[p,q]}$ to be:
+    \[
+      \strict{(\rat p\to R)\wedge (R\to\rat q)}
+    \]
+    If we consider the truth-value $\chi_{[p,q]}$ to be a function of the truth-value of $R$, we see that $\chi_{[p,q]}$ is the indicator of $R$ being in $[p,q]$.
+    From there, we may use Dynkin's $\Pi$-$\Lambda$ theorem to show that the set
+    \[
+      \{A\subset[0,1]\where \text{$A$ is Borel and there is an indicator sentence for $R$ being in $A$}\}
+    \]
+    is a $\sigma$-algebra and thus contains all Borel sets, so we may define $\chi_A$ for each Borel set $A$ to be the indicator sentence of $R$ being in $A$.
+    
+    For every $r\in[0,1]$, the formula $\bigwedge_{q\in\Q\cap[r,1]}\rat q$, which we denote $\num r$, will always have truth-value $r$.
+    
+    Consider any simple function $s:[0,1]\to[0,1]$.
+    By definition, it is of the form:
+    \[
+      s(x)=\sum_{i=1}^m r_i 1_{A_i}(x)
+    \]
+    where $m<\omega$, $r_1,\dots,r_m\in[0,1]$, $A_1,\dots,A_m$ disjoint Borel sets, and $1_{A_1},\dots,1_{A_m}$ are the indicator functions for $A_1,\dots,A_m$.
+    We see then that the sentence
+    \[
+      \bigvee_{i=1}^m \num{r}_i\wedge\chi_{A_i}
+    \]
+    is equivalent to $s$ when considered as a function of $R$.
+    
+    We therefore have all simple functions, so by approximating $f$ with simple functions from below and disjuncting their corresponding sentences, we achieve a sentence emulating $f$.
+  \end{proof}
+\end{theorem}
+\begin{remark}
+  The theorem above essentially states that any additional connective we add to the language would be redundant.
+  (TODO, cite someone who's proven that continuous functions were already approximated).
+\end{remark}
+\section{Model Existence}
+For this section, we fix a countable signature.
+As the signature does not play much role for this section, we do not give it a name.
+
+This section attempts to adapt to our logic the ideas from chapter 3 of~\cite{keisler1971model}, a chapter which defines and proves the model existence theorem.
+Specifically, we introduce an adaptation of the classical \emph{consistency property} to $[0,1]$-valued logic.
+In classical logic, the consistency property is used to guide a step-by-step process whereby sentences are individually assigned a truth value.
+Our approach is to assign \emph{ranges} of possible truth values, rather than specific truth values.
+
+With this idea in mind, we introduce our first definition:
+\begin{definition}
+  For any sentence $\phi$, a \emph{constraint} on $\phi$ is a sentence of the form $\rat p\to\phi$ or of the form $\phi\to\rat q$, where $p,q\in\Q\cap[0,1]$.
+  A set of constraints is a constraint-theory.
+  A constraint-theory $s$ is \emph{valid} if there is no sentence $\phi$ and rationals $p,q\in\Q\cap[0,1]$ such that $p>q$ and $\{\rat p\to\phi,\phi\to\rat q\}\subseteq s$.
+  We say a formula $\phi$ is \emph{constrained by} $s$, if $s$ is a constraint-theory that contains a constraint on $\phi$.
+\end{definition}
+
+We also need a definition for technical reasons that will help us later in the proof of the Model Existence Theorem.
+We already defined an arrow-manipulation in Definition~\ref{def:arrow-manipulation}.
+Arrow-manipulations are restricted to be only one step away from the sentence they are equivalent to; however, we need to be able to talk about formulas which are equivalent but are multiple steps away.
+In other words, we need some extended notion of arrow-manipulation (as well as a definition for those sentences without extended arrow-manipulations), which we achieve with the definitions below.
+\begin{definition}
+  A formula is \emph{basic} if its only connectives are `$\to$' and the rational connectives (ie. the formula does not contain $\unwedge$, $\unvee$, $\forall$, or $\exists$).
+\end{definition}
+\begin{definition}
+	For any formula $\phi$, we define the set of \emph{extended arrow-manipulations} of $\phi$ inductively as follows:
+  \begin{itemize}
+    \item The formula $\phi$ is itself an extended arrow-manipulation of $\phi$.
+    \item All arrow-manipulations of $\phi$ are extended arrow-manipulations of $\phi$.
+    \item If $\phi$ is of the form $\phi_1\to\phi_2$ then:
+    \begin{itemize}
+      \item 
+        For any $\psi_1$ that is an extended arrow-manipulation of $\phi_1$, the formula $\psi_1\to\phi_2$ and all arrow-manipulations of $\psi_1\to\phi_2$ are extended arrow-manipulations of $\phi$.
+      \item 
+        For any $\psi_2$ that is an extended arrow-manipulation of $\phi_2$, the formula $\phi_1\to\psi_2$ and all arrow-manipulations of $\phi_1\to\psi_2$ are extended arrow-manipulations of $\phi$.
+    \end{itemize}
+  \end{itemize}
+\end{definition}
+\begin{remark}
+  Let $\phi$ be a formula.
+  One can show by induction that all extended arrow-manipulations of $\phi$ are in every fragment containing $\phi$.
+  Additionally, one can show that all extended arrow-manipulations of $\phi$ are semantically equivalent to $\phi$.
+\end{remark}
+The above remark is merely housekeeping; Lemma~\ref{lem:extended-arrow-manipulations} is the true motivation for the above definition.
+Before introducing the lemma, we need to introduce a notion of complexity that is needed only to make the induction go through.
+\begin{remark}\label{rem:complexity}
+  We define the complexity of $\phi$ inductively the same way as in classical $\lang$, except that for any formulas $\phi$ and $\psi$, the complexity of $\phi\to\psi$ is the sum of the complexities of $\phi$ and $\psi$.
+  This notion of complexity is required exactly twice: for the induction in the model existence theorem and for the statement of Lemma~\ref{lem:extended-arrow-manipulations}.
+  As it is needed nowhere else, we do not give a proper name to it nor take it to be the true definition of complexity.
+  When it is used, we will simply say ``the complexity defined in Remark~\ref{rem:complexity}.''
+\end{remark}
+\begin{lemma}\label{lem:extended-arrow-manipulations}
+  For any non-basic formula $\phi$, there is an extended arrow-manipulation of $\phi$ that does not have `$\to$' as its top-level connective and is of no greater complexity than $\phi$ (when using the complexity defined in Remark~\ref{rem:complexity}).
+  \begin{proof}
+    The proof is by induction on the complexity of formulas, as defined in Remark~\ref{rem:complexity}.
+    There is no non-basic formula with complexity 1, so there is no base case.
+    
+    Let $\phi$ be a non-basic formula such that all formulas of lesser complexity satisfy the induction.
+    If $\phi$ is not of the form $\phi_1\to\phi_2$, then it doesn't have a top-level `$\to$' and therefore satisfies this lemma.
+    
+    Assume that $\phi$ does have the form $\phi_1\to\phi_2$ for some formulas $\phi_1$ and $\phi_2$.
+    We know that $\phi$ is non-basic, so one of $\phi_1$ or $\phi_2$ is non-basic.
+    
+    Assume that $\phi_1$ is non-basic.
+    By induction, there is some extended arrow-manipulation $\psi$ of $\phi_1$ with no greater complexity that $\phi_1$ and that is of one of these forms:
+    \begin{align*}
+      \unwedge\Phi &&
+      \unvee\Phi &&
+      \forall x\,\chi(x) &&
+      \exists x\,\chi(x) 
+    \end{align*}
+    
+    Assume that $\psi$ is of the form $\unwedge\Phi$ where $\Phi$ is a countable set of formulas.
+    By definition of extended arrow-manipulation, we know that all arrow-manipulations of $(\unwedge\Phi)\to\phi_2$ are extended arrow-manipulations of $\phi$.
+    Specifically, we see that
+    \[
+      \bigvee_{\chi\in\Phi}(\chi\to\phi_2)
+    \]
+    is an extended arrow-manipulation of $\phi$, and its complexity is bounded by the complexity of $\phi$.
+    The case for $\psi$ being $\unvee\Phi$ is similar.
+    
+    Assume that $\psi$ is of the form $\forall x\,\chi(x)$ for some formula $\chi$.
+    Without loss of generality, assume that $x$ is not free in $\phi_2$.
+    We notice that
+    \[
+      \exists x\,(\chi(x)\to\phi_2)
+    \]
+    is an arrow-manipulation of $\psi\to\phi_2$ and is thus an extended arrow-manipulation of $\phi$.
+    Notice that the above formulas complexity is the same as the complexity of $\phi$, so we are done.
+    The case for $\psi$ being $\exists x\,\chi(x)$ is similar.
+    
+    The case for $\phi_2$ being non-basic instead of $\phi_1$ is similar.
+    That concludes the induction.
+  \end{proof}
+\end{lemma}
+We now define consistency property for $[0,1]$-valued logic.
+As for the classical setup, we have a rule for every connective and a rule for consistency.
+In addition, we add the ``Narrowing'' and ``Introduction'' rules.
+
+\begin{definition}\label{def:cp}
+	\newcommand\litem[1]{\item{(#1)}}
+	We say a non-empty set $\mathscr{S}$ of countable, valid constraint-theories is a \emph{consistency property} if for all $s\in \mathscr{S}$ and $p,q,r\in\Q\cap[0,1]$, we have the following:
+  \begin{enumerate}[label=(CP\arabic*)]
+  \litem{Consistency Rule}\label{itm:cp-rule-consistency}
+    For any \emph{basic} sentences $\theta_1$ and $\theta_2$, we have the following:
+    \begin{itemize}
+    \item If $s$ contains $\rat p\to\theta_1$, $\theta_2\to\rat q$, and $\rat r\to(\theta_1\to\theta_2)$, then $r\leq(p\Rightarrow q)$.
+%    $\rat p\to\theta_1$ and $\theta_2\to\rat q$ are in $s$, then $s\cup\{(\theta_1\to\theta_2)\to\rat{p\Rightarrow q}\}$ is in $S$.
+    \item If $s$ contains $\theta_1\to\rat p$, $\rat q\to\theta_2$, and $(\theta_1\to\theta_2)\to\rat r$, then $r\geq(p\Rightarrow q)$.
+    %If $\theta_1\to\rat q$ and $\rat p\to\theta_2$ are in $s$, then $s\cup\{\rat{q\Rightarrow p}\to(\theta_1\to\theta_2)\}$ is in $S$.
+    %\item If $\theta_1\to\theta_2$ is constrained by $s$, then both $s\cup\{\rat 0\to\theta_1\}$ and $s\cup\{\rat 0\to\theta_2\}$ are in $S$.
+    \end{itemize}
+  \litem{$\to$-Rule}\label{itm:cp-rule-pushdown}
+    For any sentence $\phi$, if $\rat p\to\phi$ is in $s$, then $s\cup\{\rat p\to\psi\}$ is in $\mathscr{S}$ for every extended arrow-manipulation $\psi$ of $\phi$.
+  \litem{$\wedge$-Rule}\label{itm:cp-rule-wedge}
+    For any countable set of sentences $\Phi$, if $\rat p\to\unwedge\Phi$ is in $s$, then for all $\phi\in\Phi$, the set $s\cup\{\rat p\to\phi\}$ is in $\mathscr{S}$.
+	\litem{$\vee$-Rule}\label{itm:cp-rule-vee}
+		For any countable set of sentences $\Phi$, if $\rat p\to\unvee\Phi$ is in $s$, then for all $p_0\in(\Q\cap[0,p))\cup\{0\}$, there is some $\phi\in\Phi$ such that $s\cup\{\rat{p_0}\to\phi\}\in \mathscr{S}$.
+	\litem{$\forall$-Rule}\label{itm:cp-rule-forall}
+	  For any formula $\phi(x)$, if $\rat{p}\to\forall x\,\phi(x)$ is in $s$, then for any closed term $t$, the set $s\cup\{\rat p\to\phi(t)\}$ is in $\mathscr{S}$
+	\litem{$\exists$-Rule}\label{itm:cp-rule-exists}
+	  For any formula $\phi(x)$, if $\rat p\to\exists x\,\phi(x)$ is in $s$, then for all $p_0\in(\Q\cap[0,p))\cup\{0\}$, there is some closed term $t$ such that $s\cup\{\rat{p_0}\to\phi(t)\}\in \mathscr{S}$.
+  \litem{$\Q$-Rule}\label{itm:cp-rule-q}
+    The set $s\cup\{\rat q\to\rat q\}$ is in $\mathscr{S}$.
+  \litem{Introduction Rule}\label{itm:cp-rule-intro}
+    For any \emph{basic} sentences $\theta_1$ and $\theta_2$, if $\theta_1\to\theta_2$ is in $s$, then $s\cup\{\rat 0\to\theta_1,\rat 0\to\theta_2\}$ is in $\mathscr{S}$.
+  \litem{Narrowing Rule}\label{itm:cp-rule-narrowing}
+    For any sentence $\phi$, if $s$ contains a bound on $\phi$, then for all $\epsilon>0$, there is some $p_0,q_0\in\Q\cap[0,1]$ with $p_0\leq q_0< p_0+\epsilon$ such that
+    \[
+      s\cup\{\rat{p_0}\to\phi,\ \phi\to\rat{q_0}\}
+    \]
+    is in $\mathscr{S}$.
+	\end{enumerate}
+\end{definition}
+
+We now introduce some original notation which will help us talk about to where the ranges are converging.
+It is in the same spirit as the Pavelka provability degree that will be introduced in Definition~\ref{def:proof-degree}, and so we name and denote it similarly.
+\begin{definition}
+  For any constraint-theory $s$ and sentence $\phi$, the \emph{Pavelka constraint degree of $\phi$ in $s$}, denoted $|\phi|^*_s$, is the value
+  \[
+    |\phi|^*_s:=\sup\{p\in\Q\cap[0,1]\where\text{$p=0$ or $(\rat p\to\phi)\in s$}\}.
+  \]
+  Note that $|\phi|^*_s$ is always in $[0,1]$ and may be irrational.
+\end{definition}
+We now arrive at a lemma which will constitute a single-step in an inductive process in the Model Existence Theorem.
+\begin{lemma}\label{lem:one-step}
+  Let $\mathscr{S}$ be a consistency property.
+  If $\phi$ is a sentence and $s$ is a constraint-theory in $\mathscr{S}$ such that $\phi$ is constrained by $s$, then for all $\epsilon>0$, there is some $s^*\in \mathscr{S}$ such that the following hold:
+  \begin{itemize}
+  \item 
+    There is $p,q\in\Q\cap[0,1]$ with $p\leq q<p+\epsilon$ such that $\{\rat p\to\phi,\ \phi\to\rat q\}$ is a subset of $s^*$.
+  \item 
+    If $\phi$ is of the form $\unvee\Phi$, then there is some $\psi\in\Phi$ and $p\in\Q\cap[0,1]$ with $p>|\phi|^*_s-\epsilon$ such that $\rat p\to\psi$ is in $s^*$.
+  \item 
+    If $\phi$ is of the form $\exists x\,\psi(x)$, then there is some closed term $t$ and some rational $p\in\Q\cap[0,1]$ with $p>|\phi|^*_s-\epsilon$ such that $\rat p\to\psi(t)$ is in $s^*$.
+  \end{itemize}
+  \begin{proof}
+    Fix $\phi$ and $s$ as above.
+    Let $\epsilon>0$ be given.
+    
+    By the Narrowing Rule~\ref{itm:cp-rule-narrowing}, we know that we can choose some $p_1,q_1\in\Q\cap[0,1]$ and $s_1\in \mathscr{S}$ such that $p_1\leq q_1 <p_1+\epsilon$ and\[
+      s_1:=s\cup\{\rat{p_1}\to\phi,\ \phi\to\rat{q_1}\}.
+    \]
+    
+    We know that the set $\{p\in\Q\cap[0,1]\where(\rat p\to\phi)\in s_1\}$ contains $p_1$ and is therefore non-empty.
+    Thus, the definition of $|\phi|^*_{s_1}$ gives us some $p_2\in\Q\cap[0,1]$ with $p_2>|\phi|^*_{s_1}-\tfrac\epsilon2$ such that the constraint $\rat{p_2}\to\phi$ is in $s_1$.
+    Because $s$ is a subset of $s_1$, we know $|\phi|^*_s\leq|\phi|^*_{s_1}$, which implies that $p_2>|\phi|^*_s-\frac\epsilon2$.
+    
+    If $p_2=0$, then fix $p:=0$.
+    Otherwise, choose $p\in\Q\cap[0,1]$ such that 
+    \[
+      p_2-\tfrac\epsilon2<p< p_2.
+    \]
+    Notice $p>p_2-\tfrac\epsilon2>|\phi|^*_s-\epsilon$.
+    
+    We now define $s^*\supseteq s_1$ by casing on the shape of $\phi$.
+    If $\phi$ is of the form $\unvee\Phi$, then invoking the $\unvee$-Rule \ref{itm:cp-rule-vee} allows us to choose some $\psi\in\Phi$ such that $s^*:=s_1\cup\{\rat p\to\psi\}\in \mathscr{S}$.
+    If $\phi$ is of the form $\exists x\,\psi(x)$, then invoking the $\exists$-Rule \ref{itm:cp-rule-exists} allows us to choose some closed term $t$ such that $s^*:=s_1\cup\{\rat p\to\psi(t)\}\in \mathscr{S}$.
+    If $\phi$ is neither of these forms, then take $s^*:=s_1$.
+    In any case, we've defined $s^*$ satisfying the desired three properties.
+  \end{proof}
+\end{lemma}
+
+\begin{theorem}[Model Existence Theorem]
+  If $\mathscr{S}$ is a consistency property, then for every $s\in \mathscr{S}$, there is a model realizing the theory $\{\phi\where |\phi|^*_s=1\}$.
+  \begin{proof}
+    Let $s\in \mathscr{S}$ be given and take $\frag$ to be a countable fragment containing all sentences constrained by $s$.
+    Fix a sequence $(\phi_n)$ of $\mathcal L$-sentences such that every sentence in $\mathcal L$ appears infinitely often.
+    
+    We can define a chain of constraint-theories $s=s_0\subseteq s_1\subseteq\cdots\in \mathscr{S}$ as follows:
+    \begin{itemize}
+    \item If $\phi_n$ is $\rat q$ for some $q\in\Q\cap[0,1]$, then $s_{n+1}=s_n\cup\{\rat q\to\rat q\}$.
+    \item If $\phi_n$ is not constrained by $s_n$ but there is some $s^*\in \mathscr{S}$ such that $s^*\supseteq s_n$ and $\phi_n$ is constrained by $s^*$, then $s_{n+1}$ is some such $s^*$.
+    \item If $\phi_n$ is not constrained by $s_n$ and there is no superset of $s_n$ in $\mathscr{S}$ that constrains $\phi_n$, then $s_{n+1}=s_n$.
+    \item If $\phi_n$ is constrained by $s_n$, then using Lemma~\ref{lem:one-step}, we choose $s_{n+1}$ such that all of the following hold:
+	    \begin{itemize}
+		  \item 
+		    There is $p,q\in\Q\cap[0,1]$ with $p\leq q<p+\tfrac1{n+1}$ such that both $\rat p\to\phi_n$ and $\phi_n\to\rat q$ are in $s_{n+1}$.
+		  \item 
+		    If $\phi_n$ is of the form $\unvee\Phi$, then there is some $\psi\in\Phi$ and $p\in\Q\cap[0,1]$ with $p>|\phi|^*_s-\tfrac1{n+1}$ such that $\rat p\to\psi$ is in $s_{n+1}$.
+		  \item 
+		    If $\phi_n$ is of the form $\exists x\,\psi(x)$, then there is some closed term $t$ and some rational $p\in\Q\cap[0,1]$ with $p>|\phi|^*_s-\tfrac{1}{n+1}$ such that $\rat p\to\psi(t)$ is in $s_{n+1}$.
+		  \end{itemize}
+    \end{itemize}	  
+	  Define $s_\omega:=\bigcup\limits_{n<\omega}s_n$.
+	  Clearly $s_\omega$ is a countable and valid constraint-theory.
+	  
+	  We will now use $s_\omega$ to define a structure $\mathcal M$ realizing $\{\phi\where|\phi|^*_s=1\}$.
+    
+    Define the universe of $\mathcal M$ to be the set of closed terms in the language.
+    For each $n$-ary function symbol $f$ in the language and $n$-tuple of terms $\V t$, define $f^\mathcal M(\V t^\mathcal M)$ as the term $f(\V t)$.
+    For each $n$-ary relation symbol $R$ in the language and $n$-tuple of terms $\V t$, define $R^\mathcal M(\V t^\mathcal M)$ as $|R(\V t)|^*_{s_\omega}$.
+    
+    That completes the definition of $\mathcal M$.
+    
+    The remainder of this proof is dedicated to showing that for each sentence $\phi$ in the fragment that is constrained by $s_\omega$, we have $|\phi|^*_{s_\omega}\leq\phi^\mathcal M$.
+    If this were true, then we would know
+    \[
+      \mathcal M\models\{\phi\where |\phi|^*_s=1\}
+    \]
+    because $|\phi|^*_s\leq|\phi|^*_{s_\omega}$ for any sentence $\phi$ constrained by $s$.
+    
+    We split the proof into three claims.
+	  \begin{claim}{1}
+	  If $\phi$ is an $\mathcal L$-sentence constrained by $s_\omega$, then for all $\epsilon>0$, there is some $q\in\Q\cap[0,1]$ with $|\phi|^*_{s_\omega}\leq q<|\phi|^*_{s_\omega}+\epsilon$ such that the constraint $\phi\to\rat q$ is in $s_\omega$.
+	  \begin{claimproof}
+	    Let $\phi$ be an $\mathcal L$-sentence constrained by $s_\omega$, which means there is some $N<\omega$ such that $\phi$ is constrained by $s_N$.
+	    Because $\phi$ appears infinitely often in the sequence $(\phi_n)$, there is some $n>N$ such that $\phi_n$ is $\phi$ and $n$ is large enough so that $\tfrac1{n+1}<\epsilon$.
+	    Because $s_n\supseteq s_N$, we know that $\phi$ is constrained by $s_n$, so there is $p,q\in\Q\cap[0,1]$ with $p\leq q<p+\tfrac1{n+1}<p+\epsilon$ such that $\{\rat p\to\phi,\ \phi\to\rat q\}\subseteq s_{n+1}$.
+	    This means $q<|\phi|^*_{s_\omega}+\epsilon$ because $p$ and $q$ are within $\epsilon$ and $|\phi|^*_{s_\omega}$ is between $p$ and $q$.
+	    Therefore, the constraint $\phi\to\rat q$ satisfies the claim.
+	  \end{claimproof}
+	  \end{claim}
+    \begin{claim}{2}
+      For any basic $\mathcal L$-sentence $\phi$ constrained by $s_\omega$, we have $|\phi|^*_{s_\omega}=\phi^\mathcal M$.
+      \begin{claimproof}
+        The proof goes by induction on the complexity of basic sentences.
+        
+        For atomic sentences of the form $R(\V t)$, where $R$ is a relation and $\V t$ is a tuple of terms, we know that $R^\mathcal M(\V t^\mathcal M)$ is defined to be exactly $|R(\V t)|^*_{s_\omega}$.
+        For atomic sentences of the form $\rat q$ where $q$ is a rational, consider that the constraint $\rat q\to\rat q$ is in $s_\omega$, so $|\rat q|^*_{s_\omega}=q$.
+        These are the only two types of atomic sentences.
+        
+        We move onto the inductive case.
+        Assume that we have a basic sentence $\theta_1\to\theta_2$ constrained by $s_\omega$.
+        This means there is some $m<\omega$ such that $\theta_1\to\theta_2$ is constrained by $s_m$.
+        The Introduction Rule~\ref{itm:cp-rule-intro} guarantees that for any superset of $s_m$ in $\mathscr{S}$, the set can be extended to include constraints on $\theta_1$ and $\theta_2$.
+        Thus, we know $\theta_1$ and $\theta_2$ are constrained by $s_\omega$, so we apply the inductive hypothesis to see that $|\theta_1|^*_{s_\omega}=\theta_1^\mathcal M$ and $|\theta_2|^*_{s_\omega}=\theta_2^\mathcal M$.
+        
+        Because $[\theta_1\to\theta_2]^\mathcal M$ is defined to be $\min\{1,1-\theta_1^\mathcal M+\theta_2^\mathcal M\}$, we need only show that $|\theta_1\to\theta_2|^*_{s_\omega}=\min\{1,1-|\theta_1|^*_{s_\omega}+|\theta_2|^*_{s_\omega}\}$.
+        
+        Assume for the sake of contradiction that $|\theta_1\to\theta_2|^*_{s_\omega}>\min\{1,1-|\theta_1|^*_{s_\omega}+|\theta_2|^*_{s_\omega}\}$.
+        Utilizing Claim~1 and some basic arithmetic manipulation, we may take rationals $p,q,r\in\Q\cap[0,1]$ such that $r>(p\Rightarrow q)$ and
+        \[
+          \{\theta_1\to\rat p,\ \rat q\to\theta_2,\ \rat r\to(\theta_1\to\theta_2)\}\subseteq s_{\omega},
+        \]
+        but the set on the left is finite, so we may take $n<\omega$ such that
+        \[
+          \{\theta_1\to\rat p,\ \rat q\to\theta_2,\ \rat r\to(\theta_1\to\theta_2)\}\subseteq s_n,
+        \]
+        which does not satisfy the Consistency Rule~\ref{itm:cp-rule-consistency}.
+        We have arrived at our contradiction, so $|\theta_1\to\theta_2|^*_{s_\omega}\leq\min\{1,1-|\theta_1|^*_{s_\omega}+|\theta_2|^*_{s_\omega}\}$
+        
+        The proof of $|\theta_1\to\theta_2|^*_{s_\omega}\geq\min\{1,1-|\theta_1|^*_{s_\omega}+|\theta_2|^*_{s_\omega}\}$ is similar, and left out for brevity.
+        From the two inequalities, we see
+        \[
+          |\theta_1\to\theta_2|^*_{s_\omega}=\min\{1,1-|\theta_1|^*_{s_\omega}+|\theta_2|^*_{s_\omega}\}=:(|\theta_1|_{s_\omega}^*\Rightarrow|\theta_2|_{s_\omega}^*),
+        \] and thus conclude the induction.
+      \end{claimproof}
+    \end{claim}
+    \begin{claim}{3}
+      For any $\mathcal L$-sentence $\phi$ constrained by $s_\omega$, we have $|\phi|^*_{s_\omega}\leq\phi^\mathcal M$.
+      \begin{claimproof}
+        We prove this claim by induction on the complexity of sentences, using the complexity defined in Remark~\ref{rem:complexity}.
+        Claim~2 showed it true for basic sentences, so we need to examine only the non-basic cases.
+        
+        Let $\phi$ be a non-basic sentence such that all sentences of lesser complexity satisfy the claim.
+        We case on the shape of $\phi$.
+        \begin{itemize}
+        \item
+          Assume that $\phi$ is of the form $\psi_1\to\psi_2$, so by Lemma~\ref{lem:extended-arrow-manipulations}, we know there is some extended arrow-manipulation $\psi$ of $\phi$ such that $\psi$ is of no greater complexity than $\phi$ and is not an implication.
+          Utilizing the $\to$-Rule~\ref{itm:cp-rule-pushdown}, we can show that $|\phi|^*_{s_\omega}\leq|\psi|^*_{s_\omega}$.
+          Showing $|\psi|^*_{s_\omega}\leq \psi^\mathcal M$ is handled by the other cases.
+          Combining that with the fact that extended arrow-manipulations are semantically equivalent (in particular, $\psi^\mathcal M=\phi^\mathcal M$), we get that $|\phi|^*_{s_\omega}\leq\phi^\mathcal M$.
+        \item
+          Assume $\phi$ is of the form $\unwedge\Phi$. 
+          By the $\unwedge$-Rule~\ref{itm:cp-rule-wedge}, we can show that $|\phi|^*_{s_\omega}\leq|\psi|^*_{s_\omega}$ for all $\psi\in\Phi$.
+          Applying the induction hypothesis, we see:
+          \[
+            |\phi|^*_{s_\omega}\leq\inf_{\psi\in\Phi}|\psi|^*_{s_\omega}\leq\inf_{\psi\in\Phi}\psi^\mathcal M=:\phi^\mathcal M
+          \]
+        \item
+          Assume $\phi$ is of the form $\unvee\Phi$.
+          By the definition of the chain $s_0\subseteq s_1\subseteq\cdots$, we know that there are arbitrarily large $n<\omega$ with some $\psi\in\Phi$ (dependent on $n$) with $|\psi|^*_{s_\omega}>|\phi|^*_{s_\omega}-\tfrac1{n+1}$.
+          Hence:
+          \[
+            |\phi|^*_{s_\omega}\leq\sup_{\psi\in\Phi}|\psi|^*_{s_\omega}\leq\sup_{\psi\in\Phi}\psi^\mathcal M=\phi^\mathcal M
+          \]
+        \item
+          Assume $\phi$ is of the form $\forall x\,\psi(x)$.
+          By the $\forall$-Rule~\ref{itm:cp-rule-forall}, we can show that $|\phi|^*_{s_\omega}\leq|\psi(t)|^*_{s_\omega}$ for every closed term $t$.
+          So:
+          \[
+            |\phi|^*_{s_\omega}\leq\inf_t|\psi(t)|^*_{s_\omega}\leq\inf_t[\psi(t)]^\mathcal M\leq\phi^\mathcal M
+          \]
+        \item
+          Assume $\phi$ is of the form $\exists x\,\psi(x)$.
+          By the definition of $s_\omega$, we know that there are arbitrary large $n<\omega$ such that there is closed some term $t$ with $|\psi(t)|^*_{s_\omega}>|\phi|^*_{s_\omega}-\tfrac1{n+1}$.
+          Hence:
+          \[
+            |\phi|^*_{s_\omega}\leq\sup_t|\psi(t)|^*_{s_\omega}\leq\sup_t[\psi(t)]^\mathcal M=\phi^\mathcal M
+          \]
+        \end{itemize}
+        That covers all the possibilities of $\phi$, so we conclude the induction.
+      \end{claimproof}
+    \end{claim}
+    
+    Claim~3 is enough, as argued before introducing any of the claims, to achieve the desired result.
+  \end{proof}
+\end{theorem}
+
+\begin{corollary}[Extended Model Existence]
+  Let $T$ be a countable theory and $\mathscr{S}$ a consistency property.
+  If for all $s\in \mathscr{S}$, $\phi\in T$, and $p\in\Q\cap[0,1)$, the set $s\cup\{\rat p\to \phi\}$ is in $\mathscr{S}$, then there is a model of $T$.
+  \begin{proof}
+    Take $s^*=\{\rat p\to\phi\where\phi\in T,\ p\in\Q\cap[0,1)\}$.
+    It is straightforward to show that the set $\{s\cup s^*\where s\in \mathscr{S}\}$ is a consistency property.
+    Fixing any $s\in \mathscr{S}$, we can invoke Model Existence to show that $\{\phi\where |\phi|_{s\cup s^*}=1\}$ has a model, and that set contains $T$.
+  \end{proof}
+\end{corollary}
+
+\section{Completeness}
+As the section title suggests, this section is devoted to proving Completeness.
+\begin{definition}[Inference Rules]
+  For any formulas $\phi$ and $\psi$ and any countable set of formulas $\Phi$, we have the inference rules:
+  \begin{align*}
+    \infer{\psi}{\phi & \phi\to\psi} &&
+    \infer{\unwedge\Phi}{\phi\text{ (for all $\phi\in\Phi$)}} &&
+    \infer{\forall x\,\phi}{\phi\text{ ($x$ not free in assumptions in proof of $\phi$)}}
+  \end{align*}
+  When these inference rules are used in proof-theoretic proofs, we refer to them respectively as Arrow-Elimination~($\arr\elim$), And-Introduction~($\unwedge\intro$), and Generalization~($\generalization$); though we often write modus ponens instead of Arrow-Elimination.
+\end{definition}
+\begin{definition}
+  The following comprise the axiom-schema of our logic (see Notation~\ref{not:shorthand} and Notation~\ref{not:strict} for the definition of $\neg$, $\leftrightarrow$, and $\strict{\cdot}$):
+	\begin{enumerate}[label=(A\arabic*)]
+		\item\label{itm:axiom-weakening}
+			$\phi\to(\psi\to\phi)$
+	  \item\label{itm:axiom-swap}
+	    $(\phi\to(\psi\to\chi))\to(\psi\to(\phi\to\chi))$
+		\item\label{itm:axiom-trans}
+			$(\phi\to\psi)\to((\psi\to\theta)\to(\phi\to\theta))$
+		\item\label{itm:axiom-vee}
+			$((\phi\to\psi)\to\psi)\leftrightarrow(\phi\vee\psi)$
+    \item\label{itm:axiom-order}
+      $(\phi\to\psi)\vee(\psi\to\phi)$
+		\item\label{itm:axiom-classic}
+			$\neg\neg\phi\to\phi$
+		\item\label{itm:axiom-rationals}
+			$(\rat p\rightarrow\rat q)\leftrightarrow \rat r$ where $p,q,r\in\Q\cap[0,1]$ such that $r=(p\Rightarrow q)$
+		\item\label{itm:axiom-forall-arrow}
+			$(\forall x\,\phi(x))\rightarrow\phi(t)$
+		\item\label{itm:axiom-and}
+			$(\unwedge\Phi)\rightarrow\phi$ for all $\phi\in\Phi$
+		\item\label{itm:axiom-pushdown}
+			$\phi\leftrightarrow\psi$ where $\psi$ is an arrow-manipulation of $\phi$ (recall Definition~\ref{def:arrow-manipulation})
+	  \item\label{itm:axiom-loe}
+      $\strict\phi\vee\neg\strict\phi$
+	  \item\label{itm:axiom-approach}
+      $\bigvee_{p\in\Q\cap[0,1)}\rat p$	  
+		\end{enumerate}
+\end{definition}
+\begin{remark}
+  In most axiomatizations of {\L}ukasiewicz logic, one would include the commutativity of $\vee$, namely:
+  \[
+    \proves ((\phi\to\psi)\to\psi)\to((\psi\to\phi)\to\phi)
+  \]
+  However, we have defined $\phi\vee\psi$ as shorthand for $\unvee\{\phi,\psi\}$, and so it is automatically commutative, allowing the sentence above to be derived trivially from~\ref{itm:axiom-vee}.
+\end{remark}
+\begin{lemma}[Soundness]
+  The axioms above evaluate to 1 in all structures, and the inference rules are themselves sound.
+  \begin{proof}
+    The proof is clear and left to the reader.
+  \end{proof}
+\end{lemma}
+\begin{lemma}\label{lem:near-axioms}
+  The following schema are derivable:
+  \begin{enumerate}[label=(PL\arabic*), font=\normalfont]
+  \item\label{itm:axiom-rev-classic} $\phi\to\neg\neg\phi$
+  \item\label{itm:axiom-id-arrow} $\phi\to\phi$
+  \item\label{itm:axiom-1} $\rat1$
+  \item\label{itm:axiom-0-arrow} $\rat0\to\phi$
+  \item\label{itm:axiom-vee-arrow} $\phi\to(\phi\vee\psi)$
+  \item\label{itm:axiom-arrow-explode} $\neg\phi\to(\phi\to\psi)$
+  \item\label{itm:axiom-strict-arrow} $\strict\phi\to\phi$
+  \item\label{itm:axiom-rev-trans} $(\psi\to\chi)\to((\phi\to\psi)\to(\phi\to\chi))$
+  \end{enumerate}
+  \begin{proof}
+    The proofs for these are in Subsection~\ref{sub:basic-proofs}.
+  \end{proof}
+\end{lemma}
+We have opted to give a Hilbert-style logic system, as is standard for most logics outside the realm of proof-theory;
+however, there are many basic facts which must be shown within the logic itself (for instance, those of the lemma above), and Hilbert-style proofs are difficult to read.
+To help the reader parse these basic proofs, we opt for the notation of proof trees.
+
+To keep the proofs clean, for axioms \ref{itm:axiom-vee}, \ref{itm:axiom-rationals}, and \ref{itm:axiom-pushdown} (ie.\ the axioms which are two-way implications), we will invoke each direction of the arrow individually instead of writing down the axiom and then showing it implies the direction necessary for the rest of the proof.
+In other words, we will write
+\[
+  \infer[\aref{rationals}]{(\rat p\to\rat q)\to\rat r}{}
+\]
+instead of
+\[
+  \infer[\arr\elim]{(\rat p\to\rat q)\to\rat r}{
+    \infer[\aref{rationals}]{(\rat p\to\rat q)\leftrightarrow\rat r}{} &
+    \infer[\aref{and}]{((\rat p\to\rat q)\leftrightarrow\rat r)\to((\rat p\to\rat q)\to\rat r)}{}
+  }
+\]
+
+In addition to the three inference rules of our logic, we found the inference rules given by the lemma below were used frequently and that giving a name to them both decreased the size of most proofs and improved their readability.
+\begin{lemma}\label{lem:inference-rules}
+  The following inference rules are derivable:
+  {\normalfont
+  \begin{itemize}
+  \item Transitivity ($\trans$):
+    \[
+      \infer{\phi\to\chi}{\phi\to\psi & \psi\to\chi}
+    \]
+  \item
+    Arrow-Manipulation ($\pushdown$):
+    \[
+      \infer{\psi\text{ (where $\phi$ is an arrow-manipulation of $\psi$)}}{\phi}
+    \]
+  \item
+    Or-Introduction ($\unvee\intro$):
+    \[
+      \infer{\unvee\Phi}{\phi\text{ (where $\phi\in\Phi$)}}
+    \]
+  \item Swap ($\swap$):
+    \[
+      \infer{\phi\to(\psi\to\chi)}{\psi\to(\phi\to\chi)}
+    \]
+  \end{itemize}
+  }
+  \begin{proof}
+  The arrow-manipulation and swap rules are simple applications of modus ponens with the axioms \ref{itm:axiom-pushdown}, \ref{itm:axiom-vee}, and \ref{itm:axiom-swap} respectively.
+  We prove the other two:
+    \begin{itemize}
+    \item Transitivity:
+      \[
+	      \infer[\arr\elim]{\phi\to\chi}{
+	        \psi\to\chi &
+	        \infer[\arr\elim]{(\psi\to\chi)\to(\phi\to\chi)}{
+	          \phi\to\psi &
+	          \infer[\aref{trans}]{(\phi\to\psi)\to((\psi\to\chi)\to(\phi\to\chi))}{}
+	        }
+	      }
+      \]
+	  \item Or-Introduction (assume $\phi\in\Phi$):
+	    \[
+	      \infer[\trans]{\unvee\Phi}{
+	        \infer[\pushdown]{\neg\neg\unvee\Phi}{
+	          \infer[\trans]{\neg\bigwedge_{\psi\in\Phi}\neg\psi}{
+	            \infer[\aref{and}]{(\bigwedge_{\psi\in\Phi}\neg\psi)\to\neg\phi}{} &
+	            \infer[\arr\elim]{\neg\neg\phi}{
+	              \phi &
+	              \infer*[\aref{rev-classic}]{\phi\to\neg\neg\phi}{}
+	            }
+	          }
+	        } &
+	        \infer[\aref{classic}]{\neg\neg\unvee\Phi\to\unvee\Phi}{}
+	      }
+	      \qedhere
+	    \]
+    \end{itemize}
+  \end{proof}
+\end{lemma}
+Now that we have the basic setup and definitions out of the way, we can move onto our first result:
+\begin{lemma}\label{lem:vee-with-strict}
+  The following holds for any formulas $\phi$ and $\psi$:
+  \begin{itemize}
+  \item $\phi\vee\psi\proves(\phi\narrow n\rat 0)\to\psi$ for any $n<\omega$
+  \item $\phi\vee\psi\proves\neg\strict\phi\to\psi$
+  \end{itemize}
+  \begin{proof}    
+    Fix $\phi,\psi$ formulas.
+    
+    We prove the first point by induction on $n$.
+    The $n=0$ case is just \ref{itm:axiom-0-arrow}.
+    
+    Now assume that $\phi\vee\psi\proves(\phi\narrow n\rat 0)\to\psi$ holds for some $n<\omega$.
+    \[
+      \infer[\arr\elim]{(\phi\to(\phi\narrow{n}\rat 0))\to(\phi\to\psi)}{
+        \infer*{(\phi\narrow n\rat 0)\to\psi}{\phi\vee\psi} &
+        \infer*[\aref{rev-trans}]{((\phi\narrow n\rat 0)\to\psi)\to((\phi\to(\phi\narrow{n}\rat 0))\to(\phi\to\psi))}{}
+      }
+    \]
+    But of course $\phi\to(\phi\narrow n\rat 0)$ is just $(\phi\narrow{n+1}\rat 0)$ by definition.
+    Hence,
+    \[
+      \phi\vee\psi\proves(\phi\narrow{n+1}\rat 0)\to(\phi\to\psi).
+    \]
+    From there we have the proof:
+    \[
+      \infer[\trans]{(\phi\narrow{n+1}\rat 0))\to\psi}{
+        \infer*{(\phi\narrow{n+1}\rat 0)\to(\phi\to\psi)}{\phi\vee\psi} &
+        \infer[\arr\elim]{(\phi\to\psi)\to\psi}{
+          \phi\vee\psi &
+          \infer[\aref{vee}]{(\phi\vee\psi)\to((\phi\to\psi)\to\psi)}{}
+        }
+      }
+    \]
+    This completes the induction, and so the proof of the first point.
+    
+    We proceed to the second point by observing the following proof:
+    \[
+      \infer[\pushdown]{(\bigvee_{n<\omega}(\phi\narrow n\rat 0))\to\psi}{
+        \infer[\unwedge\intro]{\bigwedge_{n<\omega}((\phi\narrow n\rat 0)\to\psi)}{
+		      \infer*{(\phi\narrow n\rat 0)\to\psi\text{ (for all $n<\omega$)}}{\phi\vee\psi}
+	      }
+      }
+    \]
+    Recall that $\neg\strict\phi$ is shorthand for the formula $\neg\bigwedge_{n<\omega}\neg(\phi\narrow n\rat0)$.
+    By using \ref{itm:axiom-pushdown} and \ref{itm:axiom-classic}, one can show:
+    \[
+      \Big(\neg\bigwedge_{n<\omega}\neg(\phi\narrow n\rat0)\Big)\leftrightarrow\Big(\neg\neg\bigvee_{n<\omega}(\phi\narrow n\rat 0)\Big)\leftrightarrow\bigvee_{n<\omega}(\phi\narrow n\rat 0)
+    \]
+    And so we derive $\neg\strict\phi\to\psi$, which is what we wished to show.
+  \end{proof}
+\end{lemma}
+The above result is used often in conjunction with the Deduction Theorem, but we introduce it now because it shortens the proof of the following lemma.
+\begin{lemma}\label{lem:proves-strict}
+  If $\phi$ is a formula, then $\phi\proves\strict{\phi}$.
+  \begin{proof} 
+    Fix a formula $\phi$.
+    Observe the proof:
+    \[
+      \infer[\arr\elim]{\strict\phi}{
+        \infer[\aref{loe}]{\strict\phi\vee\neg\strict\phi}{} &
+        \infer[\pushdown]{(\strict\phi\vee\neg\strict\phi)\to\strict\phi}{
+          \infer[\unwedge\intro]{(\strict\phi\to\strict\phi)\wedge(\neg\strict\phi\to\strict\phi)}{
+            \infer*[\aref{id-arrow}]{\strict\phi\to\strict\phi}{} &
+            \infer=[\text{Lemma~\ref{lem:vee-with-strict}}]{\neg\strict\phi\to\strict\phi}{
+              \infer[\unvee\intro]{\phi\vee\strict\phi}{\phi}
+            }
+          }
+        }
+      }\qedhere
+    \]
+  \end{proof}
+\end{lemma}
+
+Recall from the intro section that we do \emph{not} have contraction in $[0,1]$-valued logic.
+However, we do have some sort of ``modus ponens under context'' result given by Lemma~\ref{lem:no-contraction}, but to prove that lemma we need the one below:
+
+\begin{lemma}\label{lem:proof-technical}
+  For any $n<\omega$ and formulas $\phi$, $\psi$, and $\chi$, we have
+  \[
+    \psi\to\chi\proves (\phi\narrow{n}\psi)\to(\phi\narrow{n}\chi).
+  \]
+  \begin{proof}
+    Fix $\phi$, $\psi$, and $\chi$.
+    The proof proceeds by induction on $n$.
+    The $n=0$ case is trivial.
+    Assume it works for some $n\geq 0$.
+    Then:
+    \[
+      \infer[\arr\elim]{(\phi\narrow{n+1}\psi)\to(\phi\narrow{n+1}\chi)}{
+        \infer*{(\phi\narrow{n}\psi)\to(\phi\narrow{n}\chi)}{\psi\to\chi} &
+        \infer*[\aref{rev-trans}]{((\phi\narrow{n}\psi)\to(\phi\narrow{n}\chi))\to((\phi\narrow{n+1}\psi)\to(\phi\narrow{n+1}\chi))}{}
+      }
+    \]
+    That concludes the induction.
+  \end{proof}
+\end{lemma}
+\begin{lemma}\label{lem:no-contraction}
+  For any $m,n<\omega$ and formulas $\phi$, $\psi$, and $\chi$, we have
+  \[
+    \{\phi\narrow{n}\psi,\ \phi\narrow{m}(\psi\to\chi)\}\proves\phi\narrow{n+m}\chi.
+  \]
+  \begin{proof}  
+  Fix $m$, $n$, $\phi$, $\psi$, and $\chi$.
+  
+  Observe:
+  \[
+    \infer[\trans]{\psi\to((\psi\to\chi)\to\chi)}{
+      \infer*[\aref{vee-arrow}]{\psi\to(\psi\vee\chi)}{} &
+      \infer[\aref{vee}]{(\psi\vee\chi)\to((\psi\to\chi)\to\chi)}{}
+    }
+  \]
+  From there, we may use Lemma~\ref{lem:proof-technical} to get:
+  \[
+    \proves (\phi\narrow{n}\psi)\to(\phi\narrow{n}((\psi\to\chi)\to\chi))
+  \]
+  Repeatedly using the Permutation Axiom~\ref{itm:axiom-swap}, we can prove:
+  \[
+    \proves (\phi\narrow{n}\psi)\to(\psi\to\chi)\to(\phi\narrow{n}\chi)
+  \]
+  Which allows us to end with this proof:
+  \[
+    \infer[\trans]{\phi\narrow{n+m}\chi}{
+      \phi\narrow{m}(\psi\to\chi) &
+      \infer=[\text{Lemma~\ref{lem:proof-technical}}]{(\phi\narrow{m}(\psi\to\chi))\to(\phi\narrow{n+m}\chi)}{
+	      \infer[\arr\elim]{(\psi\to\chi)\to(\phi\narrow{n}\chi)}{
+	        \phi\narrow{n}\psi &
+	        \infer*{(\phi\narrow{n}\psi)\to(\psi\to\chi)\to(\phi\narrow{n}\chi)}{}
+	      }
+	    }
+    }\qedhere
+  \]
+  \end{proof}
+\end{lemma}
+The above lemma allows us to formulate our deduction theorem.
+\begin{theorem}[Deduction]\label{thm:deduction}
+  If $T$ is a set of formulas and $\phi$ and $\psi$ are formulas, then $T\cup\{\phi\}\proves\psi$ if and only if $T\proves\strict\phi\to\psi$.
+  \begin{proof}
+    Fix $T$ and $\phi$.
+  
+    We start with the right-to-left direction.
+    Let $\psi$ be a formula such that $T$ proves $\strict\phi\to\psi$.
+    By Lemma~\ref{lem:proves-strict}, we know $T\cup\{\phi\}\proves\strict\phi$, so one application of modus ponens gives $T\cup\{\phi\}\proves\psi$.
+    That completes this direction.
+    
+    The other direction follows by induction on the length of proofs.
+    
+    For the base case, let $\psi$ be a formula that $T\cup\{\phi\}$ proves without using any inference rules.
+    This means $\psi$ is either an axiom or in $T\cup\{\phi\}$.
+    If $\psi$ is an axiom or in $T$, then using axiom~\ref{itm:axiom-weakening} and modus ponens, we can show $T\proves\strict\phi\to\psi$.
+    If $\psi$ is $\phi$, then we reference \ref{itm:axiom-strict-arrow} to see $T\proves\strict\phi\to\phi$.
+    That concludes the base case.
+    
+    Assume that $\psi$ is a sentence proven by $T\cup\{\phi\}$ such that all formulas before $\psi$ in the proof satisfy the hypothesis.
+    We have already shown the case true when $\psi$ is not derived by inference rules, so assume that $\psi$ is inferred.
+
+    If $\psi$ was inferred by $\unwedge\intro$, then we know that it is of the form $\unwedge\Phi$, where $\Phi$ is a countable set of formulas.
+    By the induction hypothesis, we have $T\proves\strict\phi\to\chi$ for all $\chi\in\Phi$.
+    Observe:
+    \[
+      \infer[\pushdown]{\strict\phi\to\unwedge\Phi}{
+        \infer[\unwedge\intro]{\bigwedge_{\chi\in\Phi}(\strict\phi\to\chi)}{
+          \strict\phi\to\chi\text{ (for all $\chi\in\Phi$)}
+        }
+      }
+    \]
+    So, $T\proves\strict\phi\to\psi$.
+    
+    The case for $\generalization$ is similar to the $\unwedge\intro$ case.
+    
+    Assume $\psi$ was inferred by modus ponens, then there must be some formula $\chi$ such that $\chi$ and $\chi\to\psi$ appear in the proof before $\psi$.
+    Therefore, $T\proves\strict\phi\to\chi$ and $T\proves\strict\phi\to(\chi\to\psi)$.
+    Lemma~\ref{lem:no-contraction} shows that $T\proves\strict\phi\to(\strict\phi\to\psi)$.
+    So we finish this case with the proof:
+    \[
+      \infer[\arr\elim]{\strict\phi\to\psi}{
+        \infer[\aref{loe}]{\strict\phi\vee\neg\strict\phi}{} &
+        \infer[\pushdown]{(\strict\phi\vee\neg\strict\phi)\to(\strict\phi\to\psi)}{
+          \infer[\unwedge\intro]{(\strict\phi\to(\strict\phi\to\psi))\wedge(\neg\strict\phi\to(\strict\phi\to\psi))}{
+            \infer*{\strict\phi\to(\strict\phi\to\psi)}{T} &
+            \infer*[\aref{arrow-explode}]{\neg\strict\phi\to(\strict\phi\to\psi)}{}
+          }
+        }
+      }
+    \]
+    That concludes the induction and thus the theorem.
+  \end{proof}
+\end{theorem}
+We now move into investigating how rationals interact with the proof system.
+\begin{lemma}\label{lem:rationals-basic}
+	The following hold for all $q\in\Q\cap[0,1]$:
+  \begin{itemize}
+  \item For all $p\in\Q\cap[0,1]$ and formula $\phi$, we have
+	  \[
+	    \proves(\rat p\to\phi)\to(\rat{q\Rightarrow p}\to(\rat q\to\phi))
+	  \]
+  \item For all $n<\omega$, we have
+	  \[
+	    \proves\rat{\min\{n(1-q),1\}}\to(q\narrow n\rat 0)
+	  \]
+  \end{itemize}
+  \begin{proof}
+    Fix a formula $\phi$ and rationals $p,q\in\Q\cap[0,1]$.
+  
+    The first point comes from this proof:
+    \[
+      \infer[\swap]{(\rat p\to\phi)\to(\rat{q\Rightarrow p}\to(\rat q\to\phi))}{
+        \infer[\trans]{\rat{q\Rightarrow p}\to((\rat p\to\phi)\to(\rat q\to\phi))}{
+          \infer[\aref{rationals}]{\rat{q\Rightarrow p}\to(\rat q\to\rat p)}{} &
+          \infer[\aref{trans}]{(\rat q\to\rat p)\to((\rat p\to\phi)\to(\rat q\to\phi))}{}
+        }
+      }
+    \]
+    
+    The second requires induction on $n<\omega$.
+    The case where $n=0$ is a trivial application of \ref{itm:axiom-0-arrow}.
+    
+    For the inductive step, asssume
+    \[
+      \proves\rat{\min\{n(1-q),1\}}\to(q\narrow n\rat 0)
+    \]
+    for some $n<\omega$.
+    By the first part, we see
+    \[
+      \proves\Big(\rat{\min\{n(1-q),1\}}\to(q\narrow n\rat 0)\Big)\to\Big(\rat{q\Rightarrow\min\{n(1-q),1\}}\to(\rat q\rightarrow(\rat q\narrow n\rat 0))\Big).
+    \]
+    By modus ponens and the inductive hypothesis, we have simply
+    \[
+      \proves\rat{q\Rightarrow\min\{n(1-q),1\}}\to(\rat q\rightarrow(\rat q\narrow n\rat 0)).
+    \]
+    One sees by the definition of ``$\Rightarrow$'' that
+    \[
+      (q\Rightarrow\min\{n(1-q),1\})=\min\{(n+1)(1-q), 1\}
+    \]
+    holds.
+    In addition, we see that $(\rat q\to(\rat q\narrow n\rat 0))$ is just $\rat q\narrow{n+1}\rat 0$, so we are done with the induction.
+  \end{proof}
+\end{lemma}
+The lemma above allows us a quick proof that any rational can be used to prove 0, which is well-known for finitary Pavelka Logic.
+\begin{lemma}
+  Let $q$ be a rational in $\Q\cap[0,1]$.
+  If $q<1$, then $\rat q\proves\rat 0$ and $\proves\neg\strict{\rat q}$.
+  \begin{proof}
+    Because $q<1$, we may choose $n<\omega$ large enough so that $n(1-q)\geq 1$.
+    Therefore, $\min\{n(1-q),\ 1\}=1$.
+    So by the lemma above (\ref{lem:rationals-basic}) and modus ponens, we have $\proves\rat q\narrow n\rat 0$.
+    Hence, repeating modus ponens $n$ times will yield $\rat q\proves\rat 0$.
+    
+    By the Deduction Theorem, $\rat q\proves\rat 0$ implies $\proves\strict{\rat q}\to\rat 0$, which is just $\proves\neg\strict{\rat q}$ without the shorthand.
+  \end{proof}
+\end{lemma}
+
+Proving $\rat 0$ is non-ideal and therefore $\rat q$ should be inconsistent for any reasonable definition of inconsistency.
+We settle on the one below and use Lemma~\ref{lem:alt-def-inconsistency} to show that $\rat q$ is indeed inconsistent.
+\begin{definition}
+  A theory $T$ is \emph{inconsistent} if $T\proves\phi$ for all sentences $\phi$.
+\end{definition}
+\begin{lemma}\label{lem:alt-def-inconsistency}
+  A theory $T$ is inconsistent iff $T\proves\rat q$ for some/all $q\in\Q\cap[0,1)$.
+  \begin{proof}
+    The left-to-right direction follows straight from the definition of inconsistency.
+    
+    We prove the opposite direction.
+    Let $q\in\Q\cap[0,1)$ be given such that $T\proves\rat q$.
+    We've shown that $\rat q\proves\rat 0$, so we know that $T\proves\rat 0$.
+    Because $\rat 0$ implies everything (as shown by \ref{itm:axiom-0-arrow}), we know that $T$ is inconsistent.
+  \end{proof}
+\end{lemma}
+
+\begin{lemma}[Prelinearity]\label{lem:prelinearity}
+  Let $T$ be a theory and $\phi$ and $\psi$ be formulas.
+  The following hold:
+  \begin{itemize}
+  \item $\proves\neg\strict{\phi\to\psi}\to(\psi\to\phi)$.
+  \item If $T\cup\{\phi\to\psi\}$ is inconsistent, then $T\proves\psi\to\phi$.
+  \item If $T$ is consistent, then at least one of $T\cup\{\phi\to\psi\}$ or $T\cup\{\psi\to\phi\}$ is consistent.
+  \end{itemize}
+  \begin{proof}
+    By Lemma~\ref{lem:vee-with-strict}, we know that:
+    \[
+      (\phi\to\psi)\vee(\psi\to\phi)\proves\neg\strict{\phi\to\psi}\to(\psi\to\phi)
+    \]
+    Because $(\phi\to\psi)\vee(\psi\to\phi)$ is exactly the Prelinearity Axiom~\ref{itm:axiom-order}, we see that:
+    \[
+      \proves\neg\strict{\phi\to\psi}\to(\psi\to\phi)
+    \]
+    That concludes the first part.
+    
+    By Deduction, $T\cup\{\phi\to\psi\}$ is inconsistent if only if $T\proves\neg\strict{\phi\to\psi}$.
+    From there, the first part implies $T\proves\psi\to\phi$.
+    If $T\proves\psi\to\phi$ and $T$ is consistent, then by soundness we have $T\cup\{\psi\to\phi\}$ is consistent.
+    That concludes the remaining parts.
+  \end{proof}
+\end{lemma}
+
+\begin{definition}\label{def:proof-degree}
+  Let $T$ be a theory and $\phi$ a formula.
+  The \emph{Pavelka provability degree} of $\phi$ with respect to $T$, denoted $|\phi|_T$, is the value
+  \[
+    |\phi|_T:=\sup\{p\in\Q\cap[0,1]\where T\proves\rat p\to\phi\}.
+  \]
+  Note that $|\phi|_T$ is well defined (as $T$ will always proves $\rat 0\to\phi$) and may be irrational.
+  The \emph{Pavelka truth degree} of $\phi$ with respect to $T$, denoted $\|\phi\|_T$, is the value
+  \[
+    \|\phi\|_T:=\inf\{\phi^\mathcal M\where \mathcal M\models T\}.
+  \]
+\end{definition}
+In finitary logic, it may be possible that $|\phi|_T=1$ and yet $T\not\proves\phi$;
+however, infinitary logic is more expressive and does not have this problem, as shown in the lemma below.
+\begin{lemma}\label{lem:approach}
+  Let $T$ be a theory and $\phi$ a formula.
+  If $|\phi|_T$ is rational, then
+  \[
+    T\proves\rat{|\phi|_T}\to\phi
+  \]
+  \begin{proof}
+    Assume $|\phi|_T$ is rational and take $q:=|\phi|_T$.
+    By definition of $|\phi|_T$, we know that $T\proves\rat{q_0}\to\phi$ for all $q_0\in\Q\cap[0,1]$ with $q_0<q$.
+    By Lemma~\ref{lem:rationals-basic}, we have for all $q_0<q$:
+    \[
+      T\proves\rat{q\Rightarrow q_0}\to(\rat q\to\phi)
+    \]
+    Notice that $q\Rightarrow q_0$ approaches 1 as $q_0$ approaches $q$.
+    Therefore, one may show that $T\proves\rat p\to(\rat q\to\phi)$ for all $p\in\Q\cap[0,1)$.
+    We finish with this proof:
+    \[
+      \infer[\arr\elim]{\rat q\to\phi}{
+        \infer[\aref{approach}]{\bigvee_{p\in\Q\cap[0,1)}\rat p}{} &
+        \infer[\pushdown]{(\bigvee_{p\in\Q\cap[0,1)}\rat p)\to(\rat q\to\phi)}{
+          \infer[\unwedge\intro]{\bigwedge_{p\in\Q\cap[0,1)}(\rat p\to(\rat q\to\phi))}{
+            \infer*{\rat p\to(\rat q\to\phi)\text{ (for all $p\in\Q\cap[0,1)$)}}{T}
+          }
+        }
+      }\qedhere
+    \]
+  \end{proof}
+\end{lemma}
+
+\begin{lemma}[Narrowing]\label{lem:narrowing}
+  Let $\phi$ be a sentence and $T$ a consistent theory.
+  Both of the following hold:
+  \begin{itemize}
+  \item For any rational $q\in\Q\cap[0,1]$ such that $q>|\phi|_T$, the theory $T\cup\{\phi\to\rat q\}$ is consistent.
+  \item For any $\epsilon>0$, there is some $p,q\in\Q\cap[0,1]$ with $p\leq q<p+\epsilon$ such that $T\cup\{\rat p\to\phi, \phi\to\rat q\}$ is consistent.
+  \end{itemize}
+  \begin{proof}
+    By definition of $|\phi|_T$, we know that $T\not\proves\rat q\to\phi$ for any $q\in\Q\cap[0,1]$ such that $q>|\phi|_T$.
+    So by Lemma~\ref{lem:prelinearity}, we know that $T\cup\{\phi\to\rat q\}$ is consistent for any such $q\in\Q\cap[0,1]$.
+    That completes the first claim.
+    
+    Now for the second claim.
+    If $|\phi|_T=1$, then we can just take $p=q=1$.
+    Otherwise, we take $p,q\in\Q\cap[0,1]$ such that
+    \[
+      |\phi|_T-\tfrac\epsilon2<p\leq|\phi|_T<q<|\phi|_T+\tfrac\epsilon2.
+    \]
+    By the first claim, we know that $T\cup\{\rat p\to\phi,\phi\to\rat q\}$ is consistent.
+  \end{proof}
+\end{lemma}
+\begin{lemma}\label{lem:valid-constraint}
+  For any consistent theory $T$, the set $s_T$ of constraints proven by $T$, ie.\ 
+  \begin{align*}
+    s_T:=&\{\rat p\to\phi\where\text{$\phi$ a sentence and $p\in\Q\cap[0,1]$ such that $T\proves\rat p\to\phi$}\}\\
+    &\cup\{\phi\to\rat q\where\text{$\phi$ a sentence and $q\in\Q\cap[0,1]$ such that $T\proves\phi\to\rat q$}\},
+  \end{align*}
+  is a valid constraint-theory.
+  \begin{proof}
+    Assume it weren't, then there is some sentence $\phi$ and rationals $p,q\in\Q\cap[0,1]$ such that $\rat p\to\phi$ and $\phi\to\rat q$ are in $s_T$ but $q<p$.
+    By transitivity, we would have $T\proves\rat p\to\rat q$, but that gives $T\proves\rat{p\Rightarrow q}$, which is a rational less than 1 and so makes $T$ inconsistent.
+  \end{proof}
+\end{lemma}
+\begin{lemma}\label{lem:proof-theoretic-consistency-property}
+  Let $C$ be an infinite, countable set of constants added to the language, and let $\mathcal T$ be the set of all consistent theories that reference only finitely many constants from $C$.
+  Using the notation from the previous lemma, the set of constraint-theories defined by
+  \[
+    \{s\where\text{$s$ is countable and there is some $T\in\mathcal T$ such that $s\subseteq s_T$}\}
+  \]
+  is a consistency property.
+  \begin{proof}
+    Let $\mathscr{S}$ be the set of constraint-theories defined above.
+    
+    Let $s\in \mathscr{S}$ be given and take $T\in\mathcal T$ such that $s\subseteq s_T$.
+    We've proven in Lemma~\ref{lem:valid-constraint} that $s_T$ is valid, so clearly $s$ must be as well.
+    
+    Let $p,q,r\in\Q\cap[0,1]$ be given.
+    We now prove each rule separately:
+    \begin{enumerate}[label=(CP\arabic*)]
+    \item
+      Let $\theta_1$ and $\theta_2$ be basic sentences.
+      \begin{itemize}
+      \item
+        Assume that $\rat p\to\theta_1$ and $\theta_2\to\rat q$ are in $s$.
+        One can show that this implies $T\proves(\theta_1\to\theta_2)\to(\rat p\to\rat q)$.
+        Therefore,
+        \[
+          T\proves\rat{p\Rightarrow q}\to(\theta_1\to\theta_2)
+        \]
+        so if $\rat r\to(\theta_1\to\theta_2)$ is in $s$, then $r$ must be no more than $(p\Rightarrow q)$ to preserve validity.
+      \item 
+        Assume that $\theta_1\to\rat p$ and $\rat q\to\theta_2$ are in $s$.
+        One can show that this implies $T\proves(\rat p\to\rat q)\to(\theta_1\to\theta_2)$.
+        Therefore,
+        \[
+          T\proves(\theta_1\to\theta_2)\to\rat{p\Rightarrow q}
+        \]
+        so if $\rat r\to(\theta_1\to\theta_2)$ is in $s$, then $r$ must be no less than $(p\Rightarrow q)$ to preserve validity.
+      \end{itemize}
+	  \item
+	    Let $\phi$ be a formula such that $\rat p\to\phi$ is in $s$ and let $\psi$ be an extended arrow-manipulation of $\phi$.
+      One can show by induction on the complexity of formulas that $\proves\phi\leftrightarrow\psi$, so we know that $s\cup\{\rat p\to\phi\}$ is a subset of $s_T$ and thus is in $\mathscr{S}$.
+    \item 
+	    Let $\Phi$ be a countable set of sentences such that $\rat p\to\unwedge\Phi$ is in $s$.
+	    For all $\phi\in\Phi$, we know $T\proves\rat p\to\phi$ because $T\proves\rat p\to\unwedge\Phi$, so the set $s\cup\{\rat p\to\phi\}$ is a subset of $s_T$ and is thus in $\mathscr{S}$.
+	  \item
+	    Let $\Phi$ be a countable set of sentences such that $\rat p\to\unvee\Phi$ is in $s$ and let $p_0\in(\Q\cap[0,p))\cup\{0\}$ be given.
+	    If $p_0=0$, then we know $T\proves\rat{p_0}\to\phi$ for all $\phi\in\Phi$ so $s\cup\{\rat{p_0}\to\phi\}$ is in $s_T$ and thus in $\mathscr{S}$ for every $\phi\in\Phi$.
+	    If $p_0\neq 0$, then assume for the sake of contradiction that $T\cup\{\rat{p_0}\to\phi\}$ is inconsistent for all $\phi\in\Phi$.
+	    Lemma~\ref{lem:prelinearity} therefore says $T\proves\phi\to\rat{p_0}$ for all $\phi$, but that means we have the following proof:
+	    \[
+	      \infer[\pushdown]{(\unvee\Phi)\to\rat{p_0}}{
+	        \infer[\unwedge\intro]{\bigwedge_{\phi\in\Phi}(\phi\to\rat{p_0})}{
+	          \infer*{\phi\to\rat{p_0}\text{ (for all $\phi\in\Phi$)}}{T}
+	        }
+	      }
+	    \]
+	    However, by assumption we know that $T\proves p\to(\unvee\Phi)$ and $p_0<p$, so $T$ must be inconsistent.
+	    That's a contradiction, so we know that we can pick some $\phi\in\Phi$ such that $T\cup\{\rat{p_0}\to\phi\}$ is consistent. Notice that
+	    \[
+	      s\cup\{\rat{p_0}\to\phi\}\subseteq s_{T\cup\{\rat{p_0}\to\phi\}},
+	    \]
+	    and so $s\cup\{\rat{p_0}\to\phi\}\in \mathscr{S}$.
+	  \item
+	    Let $\phi(x)$ be a formula such that $\rat{p}\to\forall x\,\phi(x)$ is in $s$.
+	    Then by Axiom~\ref{itm:axiom-forall-arrow}, we know that $T\proves\rat{p}\to\phi(t)$ for any closed term $t$.
+	    Therefore, for any closed term $t$, the constraint-theory $s\cup\{\rat{p}\to\phi(t)\}$ is a subset of $s_T$ and so in $\mathscr{S}$.
+	  \item
+	    Let $\phi(x)$ be a formula such that $\rat p\to\exists x\,\phi(x)$ is in $s$ and let $p_0$ in $(\Q\cap[0,p))\cup\{0\}$ be given.
+	    If $p_0=0$, then trivially we have $s\cup\{\rat 0\to\phi(t)\}\in \mathscr{S}$ for any closed term $t$.
+	    
+	    Assume that $p_0\neq 0$ and assume for the sake of contradiction that $T\cup\{\rat{p_0}\to\phi(t)\}$ is inconsistent for all closed terms $t$.
+	    Let $c\in C$ be not in $T$.
+	    We see that $T\proves\phi(c)\to\rat{p_0}$.
+	    However, $T$ does not reference $c$, so we may replace $c$ with some variable $x$ to get $T\proves\phi(x)\to\rat{p_0}$.
+	    Therefore,
+	    \[
+	      \infer[\pushdown]{(\exists x\,\phi(x))\to\rat{p_0}}{
+	        \infer[\generalization]{\forall x(\phi(x)\to\rat{p_0})}{
+	          \infer*{\phi(x)\to\rat{p_0}}{T}
+	        }
+	      }
+	    \]
+	    and that contradicts $T\proves\rat p\to\exists x\,\phi(x)$.
+    \item
+      Because $\proves\rat q\to\rat q$ is true, we know that $s\cup\{\rat q\to\rat q\}\subseteq s_T$ and thus is in $\mathscr{S}$.
+    \item This rule is satisfied by using \ref{itm:axiom-0-arrow}.
+	  \item This rule is a straightforward application of the Narrowing Lemma~(\ref{lem:narrowing}).
+    \end{enumerate}
+    We've shown that all rules hold, so $\mathscr{S}$ is a consistency property.
+  \end{proof}
+\end{lemma}
+\begin{theorem}
+  We have the following two results for any countable theory $T$ and sentence $\phi$.
+  \begin{itemize}
+  \item\emph{(Weak Completeness)} $|\phi|_T=\|\phi\|_T$ \emph{(recall Definition~\ref{def:proof-degree})}.
+  \item\emph{(Completeness)} $T\proves\phi$ if and only if $T\models\phi$.
+  \end{itemize}
+  \begin{proof}
+    Completeness comes from Weak Completeness and Lemma~\ref{lem:approach}, so we need only prove Weak Completeness.
+  
+    Fix $T$ and $\phi$.
+	
+	  Soundness gives that $|\phi|_T\leq\|\phi\|_T$.
+	  
+	  The other direction of the inequality is trivial when $|\phi|_T=1$, so assume that $|\phi|_T<1$ and let $q\in\Q\cap[0,1]$ be given such that $q>|\phi|_T$.
+	  By Lemma~\ref{lem:prelinearity}, we know $T\cup\{\phi\to\rat q\}$ is consistent.
+	  Define the constraint-theory $s$ as
+	  \[
+	    s:=\{\rat 1\to\psi\where \psi\in T\}\cup\{\phi\to\rat q\}
+	  \]
+	  Because $T\cup\{\phi\to\rat q\}$ is consistent, we know that $s$ is in the consistency property defined in the lemma above.
+    Thus, by Model Existence, we know that there is some structure $\mathcal M$ realizing the set $\{\psi\where |\psi|^*_s=1\}$.
+    This means that $\mathcal M\models T$ but $\mathcal M\models\phi\to\rat q$, hence $\phi^\mathcal M\leq q$.
+    Therefore, $\|\phi\|_T\leq q$ for any $q$ above $|\phi|_T$, which means that $\|\phi\|_T\leq|\phi|_T$.
+  \end{proof}
+\end{theorem}
+
+\subsection{Proofs of the Statements in Lemma~\ref{lem:near-axioms}}\label{sub:basic-proofs}
+This subsection proves the statements in Lemma~\ref{lem:near-axioms}.
+We use the notation laid out in Lemma~\ref{lem:inference-rules}.
+\begin{itemize}
+\item Proof of \ref{itm:axiom-rev-classic}:
+	\[
+	  \infer[\trans]{\phi\to\neg\neg \phi}{
+	    \infer[\trans]{\phi\to(\phi\vee\rat0)}{
+	      \infer[\aref{weakening}]{\phi\to((\rat0\to \phi)\to \phi)}{} &
+	      \infer[\aref{vee}]{((\rat0\to \phi)\to \phi)\to (\phi\vee\rat0)}{}
+	    } &
+	    \infer[\aref{vee}]{(\phi\vee\rat0)\to\neg\neg \phi}{}
+	  }
+	\]
+\item Proof of \ref{itm:axiom-id-arrow}:
+	\[
+	  \infer[\trans]{\phi\to \phi}{
+	    \infer*[\aref{rev-classic}]{\phi\to\neg\neg \phi}{} &
+	    \infer[\aref{classic}]{\neg\neg \phi\to \phi}{}
+	  }
+	\]
+\item Proof of \ref{itm:axiom-1}:
+	\[
+	  \infer[\arr\elim]{\rat1}{
+	    \infer*[\aref{id-arrow}]{\rat1\to\rat1}{} &
+	    \infer[\aref{rationals}]{(\rat1\to\rat1)\to\rat1}{}
+	  }
+	\]
+\item Proof of \ref{itm:axiom-0-arrow}:
+	\[
+	  \infer[\trans]{\rat0\to \phi}{
+	    \infer[\aref{weakening}]{\rat0\to\neg\neg \phi}{} &
+	    \infer[\aref{loe}]{\neg\neg \phi\to \phi}{}
+	  }
+	\]
+\item Proof of \ref{itm:axiom-vee-arrow}:
+  \[
+    \infer[\trans]{\phi\to(\phi\vee\psi)}{
+      \infer[\swap]{\phi\to((\phi\to\psi)\to\psi)}{
+        \infer*[\aref{id-arrow}]{(\phi\to\psi)\to(\phi\to\psi)}{}
+      } &
+      \infer[\aref{vee}]{((\phi\to\psi)\to\psi)\to(\phi\vee\psi)}{}
+    }
+  \]
+\item Proof of \ref{itm:axiom-arrow-explode}:
+	\[
+	  \infer[\trans]{\neg\phi\to(\phi\to\psi)}{
+	    \infer[\aref{trans}]{\neg\phi\to((\rat0\to\psi)\to(\phi\to\psi))}{} &
+	    \infer[\ordef]{((\rat0\to\psi)\to(\phi\to\psi))\to(\phi\to\psi)}{
+	      \infer[\unvee\intro]{(\rat0\to\psi)\vee(\phi\to\psi)}{
+	        \infer*[\aref{0-arrow}]{\rat0\to\psi}{}
+	      }
+	    }
+	  }
+	\]
+\item Proof of \ref{itm:axiom-strict-arrow}:
+  Recall that $\strict\phi$ is shorthand for $\bigwedge_{n=1}^\infty\neg(\phi\narrow n\rat 0)$, and that $\neg(\phi\narrow1\rat0)$ is just $\neg\neg\phi$.
+  Therefore, we have the proof:
+	\[
+	  \infer[\trans]{\strict\phi\to\phi}{
+	    \infer[\aref{and}]{\strict\phi\to\neg\neg\phi}{} &
+	    \infer[\aref{classic}]{\neg\neg\phi\to\phi}{}
+	  }
+	\]
+\item Proof of \ref{itm:axiom-rev-trans}:
+  \[
+    \infer[\swap]{(\psi\to\chi)\to((\phi\to\psi)\to(\phi\to\chi))}{
+      \infer[\aref{trans}]{(\phi\to\psi)\to((\psi\to\chi)\to(\phi\to\chi))}{}
+    }
+  \]
+\end{itemize}
+
+\section{Completeness for Fragments}
+\begin{definition}
+  Let $\frag$ be a fragment (recall Definition~\ref{def:fragment}).
+  For any $\frag$-theory $T$ and $\frag$-sentence $\phi$, we say
+  \[
+    T\proves_\frag\phi
+  \]
+  if there is a proof of $\phi$ assuming $T$ where every formula in the proof is in $\frag$.
+  We define $|\phi|_T^\frag$ as
+  \[
+    |\phi|_T^\frag:=\sup\{p\in\Q\cap[0,1)\where T\proves_\frag \rat p\to\phi\}
+  \]
+\end{definition}
+\begin{definition}
+  Let $\frag$ be a fragment.
+  We say that \emph{Weak Completeness holds in $\frag$} if for all countable $\frag$-theories $T$ and $\frag$-sentence $\phi$, we have (recall Definition~\ref{def:proof-degree}):
+  \[
+    |\phi|_T^\frag=\|\phi\|_T
+  \]
+  We say that \emph{Completeness holds in $\frag$} if for all countable $\frag$-theories $T$ and $\frag$-sentence $\phi$, we have:
+  \[
+    T\proves_\frag\phi\text{ if and only if }T\models\phi
+  \]
+\end{definition}
+\begin{theorem}
+  If Weak Completeness holds in a fragment that contains the formula 
+  \[
+    \bigvee_{p\in\Q\cap[0,1)}\rat p,
+  \]
+  then Completeness holds in that fragment.
+  \begin{proof}
+    The first direction of completeness holds by soundness.
+    Let $T$ be a countable $\frag$-theory and $\phi$ a $\frag$-sentence such that $T\models\phi$, meaning $\|\phi\|_T=1$.
+    Weak Completeness holds, so $|\phi|_T^\frag=1$.
+    Notice that the proof in Lemma~\ref{lem:approach} stays within the fragment, so we may reuse it here to show that $|\phi|_T^\frag=1$ implies $T\proves\rat 1\to\phi$.
+    The proof of $\rat 1$ is contained in every fragment, so we may apply modus ponens to get $T\proves_\frag\phi$.
+  \end{proof}
+\end{theorem}
+\begin{definition}
+  We say that a fragment is \emph{closed under the floor formula} if for every formula $\phi$ in the fragment, the formula $\strict{\phi}$ is in the fragment.
+\end{definition}
+
+\begin{theorem}
+  Weak Completeness holds in any fragment that is closed under the floor formula.
+  \begin{proof}
+    The proof for this is the same as Weak Completeness in the previous section, the only difference being that the consistency property defined in Lemma~\ref{lem:proof-theoretic-consistency-property} needs to be restricted to sets contained within the fragment.
+    One can check that every proof from the last section works when restricted to a fragment, as long as that fragment is closed under the floor formula.
+  \end{proof}
+\end{theorem}
+
+\begin{remark}
+  The above two theorems would indicate that our definition of fragment should really be expanded to always be closed under the floor formula and should always include the formula $\bigvee_{p\in\Q\cap[0,1)}\rat p$.
+  However, we hesitate to add those restrictions because the former would stipulate that there are no \emph{continuous} fragments (a concept that is very important, and only defined, when a metric is added to the logic) and the latter prevents the set of finite sentences from being a fragment.
+\end{remark}
+The rest of this section is devoted to getting useful results for fragments that are not closed under the floor formula.
+The core concern is that under these circumstances, there is no analog of the Deduction Theorem and thus no proof of Prelinearity.
+We do get a stronger version though, if we restrict ourselves to proofs of finite length.
+\begin{theorem}[Deduction for Finite Proofs]\label{thm:deduction-finite}
+  Let $\frag$ be a fragment.
+  For any set of $\frag$-formulas $T$ and $\frag$-formulas $\phi$ and $\psi$, we have that $T\cup\{\phi\}\proves_\frag^{<\omega}\psi$ (meaning $T\cup\{\phi\}$ proves $\psi$ within $\frag$ in finitely many steps) iff there is some $n<\omega$ such that $T\proves_\frag^{<\omega}\phi\narrow{n}\psi$.
+  \begin{proof}
+      The converse direction is immediate.
+      The proof for the forward direction is by induction on the lengths of proofs, and is a quick corollary of Lemma~\ref{lem:no-contraction} and the Arrow-Manipulation Axiom~\ref{itm:axiom-pushdown}.
+  \end{proof}
+\end{theorem}
+\begin{lemma}[Prelinearity for Finite Proofs]\label{lem:prelinearity-finite}
+  Let $\frag$ be fragment, $T$ a $\frag$-theory and $\phi$ and $\psi$ $\frag$-formulas.
+  The following hold:
+  \begin{itemize}
+  \item $\proves^{<\omega}_\frag((\phi\to\psi)\narrow{n}\rat 0)\to(\psi\to\phi)$ for all $n<\omega$.
+  \item If $T\cup\{\phi\to\psi\}\proves^{<\omega}_\frag\rat 0$, then $T\proves^{<\omega}_\frag\psi\to\phi$.
+  \item If $T\not\proves^{<\omega}_\frag\rat 0$, then at least one of $T\cup\{\phi\to\psi\}\not\proves^{<\omega}_\frag\rat 0$ or $T\cup\{\psi\to\phi\}\not\proves^{<\omega}_\frag\rat 0$ holds.
+  \end{itemize}
+  \begin{proof}
+    The first point comes from the first part of Lemma~\ref{lem:vee-with-strict} (which is allowable here because the proof was finite) and the Prelinearity Axiom~\ref{itm:axiom-order}.
+    The remaining points are a corollary of the first and the Deduction Theorem for Finite Proofs~\ref{thm:deduction-finite}.
+  \end{proof}
+\end{lemma}
+\begin{theorem}
+  Weak Completeness holds in the finite fragment.
+  \begin{proof}
+    Notice that every proof in the finite fragment is finite, or at least can be replaced with a finite proof.
+    So by the previous lemma, we know that prelinearity holds in the fragment.
+    That's enough to allow us to prove Weak Completeness for the finite fragment in the same way as for the unrestricted version, with the only difference being that the consistency property defined in Lemma~\ref{lem:proof-theoretic-consistency-property} needs to be restricted to sets contained within the fragment.
+  \end{proof}
+\end{theorem}
+
+\begin{remark}
+  We do not have an as-is completeness result for general fragments.
+  Again the issue is a lack of prelinearity.
+  However, we can always add another inference rule that gives us prelinearity within the fragment.
+  Of course, we could add prelinearity via an inference rule\footnote{the square brackets indicate an assumption that is made for this inference rule, and that is closed after the rule is invoked.} like:
+  \[
+    \infer{\psi\to\phi}{
+      \infer*{\rat 0}{[\phi\to\psi]}
+    }
+  \]
+  We could approach the problem more subtly with $\unvee$-Elimination:
+  \[
+    \infer{\chi}{
+      \phi\vee\psi &
+      \infer*{\chi}{[\phi]} &
+      \infer*{\chi}{[\psi]}
+    }
+  \]
+  Alternatively, we could do an infinite-casing type inference rule like one of these two:
+  \begin{align*}
+    \infer{\psi}{
+      \infer*{\psi}{[\phi]} &
+      \infer*[\text{for all $n<\omega$}]{\psi}{[\phi\narrow{n}\rat 0]}
+    } &&
+    \infer{\psi}{
+      \infer*{\psi}{[\phi]} &
+      \infer*[\text{for all $q\in\Q\cap[0,1)$}]{\psi}{[\phi\to\rat q]}
+    }
+  \end{align*}
+\end{remark}
+\begin{remark}
+  
+\end{remark}
+\section{In Relation to Fuzzy Logic}
+In this section, we show that the floor formula acts as a derived Baaz Delta, which we define in Definition~\ref{def:baaz}.
+The Baaz Delta was introduced in~\cite{baaz1996infinite} to study G\"odel logic (another type of fuzzy logic), though~\cite{rose1958fragments} references the same operator, simply called `J' in the paper, for use in {\L}ukasiewicz logic in the 1950s.
+
+Before talking about the Baaz Delta, let us take a quick aside to mention some notation.
+In Remark~\ref{rem:issues}, we stated that fuzzy logicians often use an additional connective.
+We introduce it now.
+\begin{definition}
+  We add to the language the derived binary connective `$\odot$,' called the \emph{{\L}ukasiewicz t-norm}, defined so that for all formulas $\phi$ and $\psi$, the formula $\phi\odot\psi$ is
+  \[
+    \neg(\phi\to\neg\psi).
+  \]
+  In addition, for any formula $\phi$ and $n<\omega$, we define the formula\footnote{The formula $\phi^n$ is endearingly referred to in~\cite{metcalfe2008proof} as a \emph{confusion} of $\phi$.} $\phi^n$ to be
+  \[
+    \underbrace{\phi\odot\phi\odot\cdots\odot\phi\odot\phi}_\text{$n$ times}
+  \]
+\end{definition}
+\begin{remark}
+  Fix formulas $\phi$, $\psi$, and $\chi$.
+  For any structure $\mathcal M$, the formula $\phi\odot\psi$ has truth-value:
+  \[
+    \max\{\phi^\mathcal M+\psi^\mathcal M-1, 0\}
+  \]
+  With basic invoking of definitions, we see:
+  \[
+    \phi\to(\psi\to\chi)\equiv (\phi\odot\psi)\to\chi
+  \]
+  So that for any $n<\omega$, the formula $\phi\narrow{n}\psi$ is equivalent to $\phi^n\to\psi$.
+  Therefore:
+  \[
+    \strict{\phi}\equiv \bigwedge_{n<\omega}\phi^n
+  \]
+\end{remark}
+\begin{definition}\label{def:baaz}
+  We define the logic $\baselang_\triangle$ by extending the logic $\lang$ defined in this paper with a new unary operator `$\triangle$,' called the \emph{Baaz Delta}, which is interpreted semantically for any structure $\mathcal M$ and formula $\phi$ as:
+  \[
+    [\triangle\phi]^\mathcal M:=\left\{\begin{array}{ll} 
+      1&\text{if $\phi^\mathcal M=1$}\\
+      0&\text{otherwise}
+    \end{array}\right.
+  \]
+  In addition, we add the inference rule:
+  \[
+    \infer{\triangle\phi}{\phi}
+  \]
+  and the axiom schemas:
+  \begin{enumerate}[label=(A$\triangle$\arabic*)]
+  \item\label{itm:axiom-loe-baaz} $\triangle\phi\vee\neg\triangle\phi$
+  \item\label{itm:axiom-vee-baaz} $\triangle(\phi\vee\psi)\to(\triangle\phi\vee\triangle\psi)$
+  \item\label{itm:axiom-strict-baaz} $\triangle\phi\to\phi$
+  \item\label{itm:axiom-double-strict-baaz} $\triangle\phi\to\triangle\triangle\phi$
+  \item\label{itm:axiom-impl-baaz} $\triangle(\phi\to\psi)\to(\triangle\phi\to\triangle\psi)$
+  \end{enumerate}
+\end{definition}
+\begin{theorem}
+  The new axioms and inference rules of $\baselang_\triangle$ are derivable in $\lang$ when replacing references of $\triangle\phi$ with $\strict\phi$.
+  \begin{proof}
+    The inference rule was shown to hold in Lemma~\ref{lem:proves-strict}.
+    The law of the excluded middle~\ref{itm:axiom-loe-baaz} was taken as axiom~\ref{itm:axiom-loe} in our logic, though it's interesting to note that the proof of validity of $\strict{\phi}\vee\neg\strict\phi$ has more to do with the Archimedean principle than with logic.
+    We showed~\ref{itm:axiom-strict-baaz} with \ref{itm:axiom-strict-arrow}.
+    The axioms~\ref{itm:axiom-double-strict-baaz} and~\ref{itm:axiom-impl-baaz} come from the Deduction Theorem~\ref{thm:deduction} and Lemma~\ref{lem:proves-strict} as follows:
+    \begin{align*}
+      \phi&\proves\phi&  \phi\to\psi,\phi&\proves\psi\\
+      \phi&\proves\strict\phi&  \phi\to\psi,\phi&\proves\strict\psi\\
+      \phi&\proves\strict{\strict\phi}&  \phi\to\psi&\proves\strict\phi\to\strict\psi\\
+      &\proves\strict{\phi}\to\strict{\strict\phi}&
+      &\proves\strict{\phi\to\psi}\to(\strict\phi\to\strict\psi)
+    \end{align*}
+    The only remaining axiom to derive is~\ref{itm:axiom-vee-baaz}.
+    By the Deduction Theorem, we need only show $\phi\vee\psi\proves\strict\phi\vee\strict\psi$.
+    First we prove that $\phi\vee\psi\proves\strict\phi\vee\psi$ as follows:
+    \[
+      \infer[\arr\elim]{\strict\phi\vee\psi}{
+        \infer[\aref{loe}]{\strict\phi\vee\neg\strict\phi}{} &
+        \infer[\pushdown]{(\strict\phi\vee\neg\strict\phi)\to(\strict\phi\vee\psi)}{
+          \infer[\unwedge\intro]{(\strict\phi\to(\strict\phi\vee\psi))\wedge(\neg\strict\phi\to(\strict\phi\vee\psi)}{
+            \infer=[\aref{vee-arrow}]{\strict\phi\to(\strict\phi\vee\psi)}{} &
+            \infer[\trans]{\neg\strict\phi\to(\strict\phi\vee\psi)}{
+              \infer=[\text{Lemma~\ref{lem:vee-with-strict}}]{\neg\strict\phi\to\psi}{\phi\vee\psi} &
+              \infer=[\aref{vee-arrow}]{\psi\to(\strict\phi\vee\psi)}{}
+            }
+          }
+        }
+      }
+    \]
+    The same proof gives $\strict\phi\vee\psi\proves\strict\phi\vee\strict\psi$, so we have $\phi\vee\psi\proves\strict\phi\vee\strict\psi$.
+  \end{proof}
+\end{theorem}
+
+
+\section{Model-Theoretic Results}
+We now move onto the second part of this paper.
+From this point on, we will take $\frag$ to be a fixed, countable fragment.
+All structures we refer to will be in the language described in $\frag$.
+\subsection{Downward L\"owenheim-Skolem-Tarski}
+\begin{definition}
+  Let $\mathcal M$ and $\mathcal N$ be structures.
+  We take $\mathcal M\preceq_\mathcal L\mathcal N$ to mean that $M\subseteq N$ and for all $\mathcal L$-formulas $\phi(\V x)$ (where $\len(\V x)<\omega$) and tuples $\V a\in M^{\len(\V x)}$ we have:
+  \[
+    \mathcal M\models\phi(\V a)\text{ if and only if }\mathcal N\models\phi(\V a)
+  \]
+\end{definition}
+
+\begin{remark}
+  If we have two structures $\mathcal M$ and $\mathcal N$ such that $\mathcal M\preceq_\frag\mathcal N$, then one can quickly show that $\phi^\mathcal M(\V a)=\phi^\mathcal N(\V a)$ for all $\frag$-formulas $\phi(\V x)$ (with $\len(\V x)<\omega$) and tuples $\V a\in\mathcal M^{\len(\V x)}$.
+\end{remark}
+
+\begin{theorem}[Tarski-Vaught Test]\label{lem:tarski-vaught-test}
+  Let $\mathcal M$ and $\mathcal N$ be two structures with $\mathcal M\subseteq\mathcal N$.
+  The following are equivalent:
+  \begin{itemize}
+  \item $\mathcal M\preceq_\frag\mathcal N$
+  \item 
+     For every $\mathcal L$-formula $\phi(x;\V y)$ with finitely many free variables and every tuple $\V b\in M^{\len(\V y)}$, we have
+     \[
+       \mathcal N\models\exists x\,\phi(x;\V b)
+     \]
+     only if for every $p\in\Q\cap[0,1)$ there is a value $a\in M$ such that
+     \[
+       \mathcal M\models\rat p\to\phi(a;\V b).
+     \]
+  \end{itemize}
+  \begin{proof}
+    TODO: induction showing every valuation is the same.
+  \end{proof}
+\end{theorem}
+
+\begin{definition}
+  For every rational $p\in[0,1)$ and $\frag$-formula of the form $\exists x\,\phi(x;\V y)$ with $\len(\V y)<\omega$, we define the Skolem-function symbol $\skolem p{\exists x\phi}(\V y)$.
+  We let $\fragsk$ denote the smallest fragment extending $\frag$ that has a Skolem-function symbol for every formula $\exists x\,\phi(x;\V y)$ in $\fragsk$.
+  We define the Skolem-theory $\Tskolem$ as
+  \[
+    \Tskolem:=\Big\{(\forall\V y)\,\rat p\to\Big(\exists x\,\phi(x;\V y)\to\phi(\skolem p{\exists x\phi}(\V y);\V y)\Big)\where \phi\in\fragsk\text{ and }p\in\Q\cap[0,1)\Big\}.
+  \]
+\end{definition}
+
+\begin{remark}
+  Every structure has an expansion into $\fragsk$ that models $\Tskolem$.
+\end{remark}
+
+\begin{lemma}
+  Let $\mathcal N$ be a structure that satisfies $\Tskolem$.
+  Any submodel of $\mathcal N$ is a $\fragsk$-elementary substructure of $\mathcal N$.
+  \begin{proof}
+    Just as in classical $L_{\omega_1,\omega}$, this proof follows from the Tarski-Vaught test.
+    Let $\mathcal M$ be a submodel of $\mathcal N$.
+    Fix any $\fragsk$-formula $\phi(x;\V y)$ with finitely many free variables and let $\V b\in M^{\len(\V y)}$ be given such that $\mathcal N\models\exists x\,\phi(x;\V b)$.
+    
+    Fix an arbitrary $p\in\Q\cap[0,1)$ and take $a:=\skolem p{\exists x\phi}^\mathcal N(\V b)$.
+    The way $a$ is defined and the fact that $\mathcal M\subseteq\mathcal N$ means that $a\in M$.
+    Additionally, we assumed $\mathcal N\models \Tskolem$, which implies $\mathcal N\models \rat p\to\phi(a,\V b)$.
+    Thus, we may invoke the Tarski-Vaught test.
+  \end{proof}
+\end{lemma}
+
+\begin{theorem}[Downward L\"owenheim-Skolem-Tarski]
+  For any infinite cardinal $\alpha$, structure $\mathcal N$, and set $A\subseteq N$ with $|A|\leq\alpha\leq|N|$, there exists a structure $\mathcal M$ satisfying $|M|=\alpha$, $A\subseteq M$, and $\mathcal M\preceq_\frag\mathcal N$.
+  
+  \begin{proof}
+    The proof is the same as in classical logic: expand $\mathcal N$ to satisfy $\Tskolem$ and take $\mathcal M$ to be the Skolem Hull of $A$ reducted back to $\frag$.
+  \end{proof}
+\end{theorem}
+
+\subsection{Indiscernibles}
+\begin{definition}
+  Consider any structure $\mathcal M$.
+  We define a \emph{sequence of indiscernibles in $\mathcal M$} to be a linear-ordered set $\langle A,<\rangle$ satisfying $A\subseteq M$ and for any $n<\omega$ and ordered tuples $\V a,\V b\in[A]^n$, we have:
+  \[
+    (\mathcal M,\V a)\equiv_\frag (\mathcal M,\V b)
+  \]
+  meaning that for all $\frag$-formulas $\phi(\V x)$ with $\len(\V x)=n$, we have:
+  \[
+    \mathcal M\models\phi(\V a)\quad\text{if and only if}\quad\mathcal M\models\phi(\V b)
+  \]
+\end{definition}
+
+\begin{theorem}[Stretching Theorem]\label{thm:stretching}
+  Let $\mathcal M$ be a model of $\Tskolem$ and let $\langle A,<\rangle$ be an infinite sequence of indiscernibles in $\mathcal M$.
+  For any infinite linear-ordered set $\langle B,<\rangle$, there exists a model $\mathcal N$ such that $\langle B,<\rangle$ is a sequence of indiscernibles in $\mathcal N$ and for all $n<\omega$ and tuples $\V a\in[A]^n$ and $\V b\in[B]^n$ we have:
+  \[
+    (\mathcal M,\V a)\equiv_\frag (\mathcal N,\V b)
+  \]
+  Note that because $n$ could be 0, we see this immediately implies $\mathcal M\equiv_\frag\mathcal N$.
+  \begin{proof}
+    Without loss of generality, we may assume that $\mathcal M$ is the structure generated by $A$ in $\fragsk$.
+    
+    Let an infinite linear-ordered set $\langle B,<\rangle$ be given.
+    
+    Define the set $\mathcal T$ of formal terms
+    \[
+      \mathcal T:=\{t(\V b)\where \text{$t$ is a term in $\fragsk$ and $\V b$ is an ordered tuple in $B$}\}.
+    \]
+    We proceed by defining an equivalence relation $\sim$ on $T$.
+    Let $t_1(\V b_1)$ and $t_2(\V b_2)$ be elements of $T$; we say that $t_1(\V b_1)\sim t_2(\V b_2)$ iff 
+    \[
+      t_1^\mathcal M(\V a_1)=t_2^\mathcal M(\V a_2)\text{ for all $\V a_1\in[A]^{\len(\V b_1)}$ and $\V a_2\in[A]^{\len(\V b_2)}$}
+    \]
+    Define $N:=\mathcal T/{\sim}$.
+    
+    Because a single free-variable $x$ is a term, we know that $B\subseteq \mathcal T$.
+    Of course, $a_1\neq a_2$ for any distinct $a_1,a_2\in A$, implying that $b_1\not\sim b_2$ for any distinct $b_1,b_2\in B$.
+    Thus, we may unambiguously identify each $b\in B$ with its equivalence class in $N$.
+    Therefore, $B\subseteq N$.
+    
+    Let $f$ be a function symbol in $\fragsk$ with some arity $n<\omega$.
+    Let $u_1,\dots,u_n$ be in $N$, meaning we can take terms $t_1,\dots,t_n$ and ordered tuples $\V b_1,\dots,\V b_n$ in $B$ such that $u_i$ is the equivalence class of $t_i(\V b_i)$ over $\sim$ for each $i$ in 1 through $n$.
+    Let $\V b$ be the ordered tuple containing all of $\V b_1,\dots,\V b_n$ and let $t$ be a term such that unpacks $\V b$ into the term $f(t_1(\V b_1),\dots,t_n(\V b_n))$, meaning that
+    \[
+      t(\V b)=f(t_1(\V b_1),\dots,t_n(\V b_n))
+    \]
+    is established syntactically.
+    We define:
+    \[
+      f^\mathcal N(u_1,\dots, u_n):=t(\V b)/{\sim}
+    \]
+    One can check that this definition is unambiguous.
+    
+    Consider any relation symbol $R$ of some arity $n<\omega$.
+    Taking $u_1,\dots,u_n$, $t_1,\dots,t_n$, and $\V b_1,\dots,\V b_n$ as before,
+    taking arbitrary ordered tuples $\V a_1,\dots,\V a_n$ from $A$ such that $\len(\V a_i)=\len(\V b_i)$ for all $i$, we define
+    \[
+      R^\mathcal N(u_1,\dots,u_n):=R^\mathcal M(t_1(\V a_1),\dots,t_n(\V a_n)).
+    \]
+    Again, one may check that $R^\mathcal N$ is unambiguously defined.
+    
+    Of course, one defines $c^\mathcal N$ for each constant $c$ in $\fragsk$ as the equivalence class of $c$ in $N$.
+    
+    From all this, we may define $\mathcal N:=(N, c^\mathcal N, f^\mathcal N,R^\mathcal N)_{c,f,R\in\fragsk}$ to achieve a model satisfying the requirements of this theorem's conclusions.
+  \end{proof}
+\end{theorem}
+
+\subsection{Hanf Number}
+
+In this section, we will prove that the Hanf Number of real-valued infinitary logic is $\beth_{\omega_1}$.
+
+\begin{theorem}[Erd\"os-Rado]
+  For any infinite cardinal $\alpha$ and natural number $n<\omega$, we have:
+  \[
+    \beth_n(\alpha)^+\rightarrow(\alpha^+)^{n+1}_\alpha
+  \]
+\end{theorem}
+\begin{remark}\label{rem:erdos}
+  Fixing $\alpha<\omega_1$ and $n<\omega$, we have the following useful corollaries of Erd\"os-Rado:
+  \begin{enumerate}[label=({\ref{rem:erdos}}.\arabic*)]
+  \item\label{itm:erdos-omega} That $\beth_{\alpha+n}\rightarrow(\beth_\alpha)^n_\omega$ holds is derived from $\beth_{n-1}(\beth_\alpha)^+\rightarrow(\beth_\alpha^+)^n_{\beth_\alpha}$.
+  \end{enumerate}
+\end{remark}
+\begin{theorem}\label{thm:hanf}
+  Let $T$ be an $\frag$-theory.
+  If $T$ has a model of size $\beth_\alpha$ for all infinite $\alpha<\omega_1$, then:
+  \begin{itemize}
+  \item $T$ has a model with an infinite sequence of indiscernibles.
+  \item $T$ has a model of all infinite powers.
+  \end{itemize}
+  \begin{proof}
+    The fact that the first result implies the second is an easy consequence of the Stretching Theorem~(\ref{thm:stretching}).
+    So we must only proof the first result.
+    The proof is conceptually identical to the proof for classical logic.
+    
+    Expand the fragment $\frag$ to a fragment $\frag^*$ with a new binary relation symbol $\sim$ and two new countable set of constants $K$ and $C=\{c_1,c_2,\dots\}$.
+    Define the theory $I$ as the set of all $\frag^*$-sentences of the form:
+    \[
+      \psi(c_{i_1},\dots,c_{i_n})\leftrightarrow \psi(c_{j_1},\dots,c_{j_n})\text{ where }\left\{\begin{array}{l}i_1<\cdots<i_n\\j_1<\cdots<j_n\\\psi(x_1,\dots,x_n)\in\frag\end{array}\right.
+    \]
+    Define the $\frag^*$-theory $E$ by
+    \[
+      E:=\{(\forall x)\,x\sim x\}\cup\{\neg(c_i\sim c_j) \mid i\neq j\}
+    \]
+    One can see that $E$ specifies each of the elements of $C$ are represented by distinct elements and that $I$ stipulates the set $C$ (ordered by index) forms a sequence of indiscernibles.
+    Therefore, any model of $T\cup I\cup E$ reducted to $\frag$ will be a model of $T$ with an infinite set of indiscernibles.
+    So we need only find a model of $T\cup I\cup E$, which we will accomplish with the Extended Model Existence Theorem~(\ref{thm:model-existence-extended}), which requires us to define a consistency property.
+    
+    Take the set $\mathscr{S}$ to contain of all finite $\frag^*$-constraint-theories $s$ such that:
+    \begin{itemize}
+    \item Only finitely many of $C$ and $K$ are referenced in $s$, which we denote $\V c_s$ and $\V k_s$ respectively.
+    \item For all $\alpha<\omega_1$, there is an $\frag$-structure $\mathcal M\models T$, tuple $\V b\in M^{\len(\V k_s)}$, and linear-ordered set $\langle A,<\rangle$ with $|A|=\beth_\alpha$ and $A\subseteq M$ such that 
+    \[
+      (\mathcal M,{=}/{\sim},\V a/\V c_s, \V b/\V k_s)\models s\text{ for all $\V a\in[A]^{\len(\V c_s)}$}.
+    \]
+    where we take $(\mathcal M,{=}/{\sim},\V a/\V c_s,\V b/\V k_s)$ to mean the model extending $\mathcal M$ by interpreting the $\sim$ relation as exact equality (1 for equal, 0 for not) and with each element of $\V c_s$ represented by the corresponding element in $\V a$ and similarly for $\V k_s$ and $\V b$.
+    \end{itemize}
+    We claim that $\mathscr{S}$ is a consistency property.
+    The Consistency, $\rightarrow$, $\wedge$, $\forall$, and $\Q$ rules are all proven in the straightforward way.
+    Proving the $\exists$-rule requires taking some unreferenced constant in $K$ to represent an approximate witness, which is relatively standard (and the only reason for the set of constants $K$).
+    We distribute the proofs of the rest of the properties into claims.
+    \begin{claim}{1}
+      The set $\mathscr{S}$ is non-empty.
+      \begin{claimproof}
+        Take $s=\{(\forall x)\,x\sim x\}$.
+        Clearly $s$ is finite and doesn't reference any of $C$ and $K$, so we've satisfied the first requirement.
+        
+        Fix any $\alpha<\omega_1$.
+        We know by assumption that there is a $\frag$-structure $\mathcal M\models T$ of size $\beth_\alpha$.
+        Clearly $(\mathcal M,{=}/{\sim})\models s$.
+        As the linear-ordered set is not necessary, we can simply consider any linear-ordering $\langle M,<\rangle$ of $M$ and be done.
+        Thus, $s\in \mathscr{S}$, making $\mathscr{S}$ non-empty.
+      \end{claimproof}
+    \end{claim}
+    \begin{claim}{2}
+      The set $\mathscr{S}$ satisfies the $\vee$-rule.
+      \begin{claimproof}
+        Fix a set $s\in \mathscr{S}$ and formula $(\rat q\to\unvee\Phi)\in s$, where $\Phi$ is a countable set of formulas.
+        Let $p\in\Q\cap[0,q)$ be given.
+        Define $n<\omega$ as the number of constants in $C$ referenced by $s$ (ie.\ $n:=\len(\V c_s)$).
+        
+        Consider any $\alpha<\omega_1$.
+        By definition of $s$ being in $\mathscr{S}$, we know there is a model $\mathcal M$, tuple $\V b\in M^{\len(\V k_s)}$, and linearly ordered set $\langle A,<\rangle$ with $|A|=\beth_{\alpha+n}$ and $A\subseteq M$ such that
+        \[
+		      (\mathcal M,{=}/{\sim},\V a/\V c_s, \V b/\V k_s)\models s\text{ for all $\V a\in[A]^n$}.
+		    \]
+		    This means that $\unvee\Phi$ evaluates to at least $q$ in each of those models, so for each $\V a\in[A]^n$, we know we can choose some formula $\phi_{\V a}\in\Phi$ that satisfies
+		    \[
+		      (\mathcal M,{=}/{\sim},\V a/\V c_s, \V b/\V k_s)\models s\cup\{\rat p\to\phi_{\V a}\}.
+		    \]
+		    Using the Erd\"os-Rado result~\ref{itm:erdos-omega} with the function from $[A]^n$ to $\Phi$ defined by $\V a\mapsto \phi_{\V a}$, we can take $A_0\subseteq A$ with $|A_0|=\beth_\alpha$ such that $\phi_{\V a}$ is the same sentence for each $\V a\in[A_0]^n$.
+		    Denote that sentence $\phi_\alpha$.
+		    
+		    We can repeat the process above to get a sequence $\{\phi_\alpha\where \alpha<\omega_1\}$.
+		    There are only countably many elements of $\Phi$, so we may choose a sentence $\phi$ such that $\phi=\phi_\alpha$ for arbitrarily high $\alpha<\omega_1$.
+		    
+		    For each $\alpha<\omega_1$ such that $\phi=\phi_\alpha$, we see that there must be a structure with linearly-ordered set of size $\beth_\alpha$ which models $s$ in the desired way.
+		    For any $\alpha<\omega_1$ where $\phi\neq\phi_\alpha$, we can take a model with an ordered set larger that $\beth_\alpha$ and simply remove elements until it is exactly of size $\beth_\alpha$.
+      \end{claimproof}
+    \end{claim}
+    \begin{claim}{3}
+      The set $\mathscr{S}$ satisfies the Narrowing rule.
+      \begin{claimproof}
+         Fix a set $s\in \mathscr{S}$ and formula $\phi$ constrained in $s$.
+         Let $\epsilon>0$ be given.
+         Denote by $\mathcal Q$ the set
+         \[
+           \mathcal Q:=\{[p,q]\where p,q\in\Q\cap[0,1],\ 0\leq q-p<\epsilon\}
+         \]
+         Clearly $\mathcal Q$ is countable.
+         
+         The rest of this claim proceeds the same way as the claim above, except that instead of mapping ordered-tuples into some countable set of formulas, one maps ordered-tuples into $\mathcal Q$.
+      \end{claimproof}
+    \end{claim}
+    
+    The above three claims show that $\mathscr{S}$ is a consistency property.
+    As stated above, we now wish to find a model of $T\cup I\cup E$ using the Extended Model Existence Theorem~(\ref{thm:model-existence-extended}).
+    
+    Fix some $s\in \mathscr{S}$, $\phi\in T\cup I\cup E$, and $r\in\Q\cap[0,1)$.
+    We wish to show that $s\cup\{\rat r\to\phi\}\in \mathscr{S}$.
+    One can show straight from the definition of $\mathscr{S}$ that if $\phi\in T\cup E$, then $s\cup\{\rat 1\to\phi\}\in \mathscr{S}$, which implies $s\cup\{\rat r\to\phi\}\in \mathscr{S}$.
+    
+    Assume that $\phi\in I$, meaning that $\phi$ is of the form
+    \[
+      \psi(c_{i_1},\dots,c_{i_n})\leftrightarrow \psi(c_{j_1},\dots,c_{j_n})
+    \]
+    where $\psi(\V x)$ is a $\frag$-formula.
+    Define $\mathcal Q$ as
+    \[
+      \mathcal Q:=\{[p,q]\where p,q\in\Q\cap[0,1],\ 0\leq q-p<1-r\}.
+    \]
+    [TODO]
+  \end{proof}
+  \begin{corollary}\label{cor:lst}
+    If a $\frag$-theory $T$ has a model of size at least $\beth_{\omega_1}$, then $T$ has a model of any infinite cardinality.
+    \begin{proof}
+      By Downward L\"owenheim-Skolem-Tarski, we know that $T$ has a model of size $\beth_\alpha$ for all $\alpha<\omega$, so we may apply the previous theorem to see $T$ has a model of arbitrary infinite cardinality.
+    \end{proof}
+  \end{corollary}
+\end{theorem}
+
+
+\subsection{Morley's Two Cardinal Theorem}
+  For this section, we fix a countable language $L$ containing a unary predicate symbol $U$ and we fix a countable fragment $\mathcal L$ of $L_{\omega_1,\omega}$.
+  \begin{remark}
+    In classical logic, one often thinks of a unary relation as a set, so that for a model $\mathcal M$ and relation $U$, one would interchangeably say $x\in U^\mathcal M$ and $U^\mathcal M(x)$.
+    We adopt this notation, so that $U^\mathcal M$ will be thought of as both a real-valued relation and the set $\{x\in M\where U^\mathcal M(x)=1\}$.
+  \end{remark}
+  \begin{definition}
+    (Note should cite Grossberg pg. 194).
+    Let $T$ be a first-order $L$-theory.
+    For cardinals $\lambda\geq \mu$, we say that $T$ \emph{admits a model of type $\langle\lambda,\mu\rangle$} iff there exists a model $\mathcal M\models T$ of size $\lambda$ such that $|U^\mathcal M|=\mu$.
+  \end{definition}
+  \begin{definition}
+    For any model $\mathcal M$ linear ordered set $\langle A,<\rangle$ with $A\subseteq M$, we say that $\langle A,<\rangle$ is a \emph{sequence of indiscernibles over $U$ in $\frag$} if for all finite tuples $\V u$ of $U^\mathcal M$ and $\V a,\V b\in [A]^{<\omega}$ with $\len(\V a)=\len(\V b)$, we have:
+    \[
+      (\mathcal M, \V u, \V a)\equiv_\frag (\mathcal M,\V u, \V b)
+    \]
+  \end{definition}
+  \begin{lemma}
+    Let $T$ be a $\frag$-theory.
+    If for each ordinal $\alpha<\omega_1$ there exists a cardinal $\mu$ such that $T$ admits a model of type $\langle\beth_{\alpha}(\mu),\mu\rangle$, then there is a model $\mathcal M\models T$ with $U^\mathcal M$ being infinite.
+    \begin{proof}
+      This proof is very similar the one for Theorem~\ref{thm:hanf}. 
+      
+      Expand the fragment $\frag$ to a countable fragment $\frag^*$ with a new binary relation symbol $\sim$ and two new countable set of constants $K$ and $C=\{c_1,c_2,\dots\}$.
+      In addition, take $\frag^*$ to be closed under flooring.
+    Define the theory $I$ as the set of all $\frag^*$-sentences of the form
+    \[
+      \forall u_1\cdots\forall u_m\Big(\psi(u_1,\dots,u_m;c_{i_1},\dots,c_{i_n})\leftrightarrow \psi(u_1,\dots,u_m;c_{j_1},\dots,c_{j_n})\Big)
+    \]
+    where $n<\omega$, $m<\omega$, $i_1<\cdots<i_n$, $j_1<\cdots<j_n$, and $\psi(\V x;\V y)\in\frag$.
+    Define the $\frag^*$-theory $E$ by
+    \[
+      E:=\{(\forall x)\,x\sim x\}\cup\{\neg(c_i\sim c_j) \mid i\neq j\}
+    \]
+    One can see that $E$ specifies each of the elements of $C$ are represented by distinct elements and that $I$ stipulates the set $C$ (ordered by index) forms a sequence of indiscernibles.
+    
+    Take $T'$ to be the $\frag^*$-theory to be $T$ with sentences that stipulate that $U$ is infinitely realized.
+    
+    Therefore, any model of $T'\cup I\cup E$ reducted to $\frag$ will be a model of $T$ with an infinite set of indiscernibles.
+    So we need only find a model of $T'\cup I\cup E$, which we will accomplish with the Extended Model Existence Theorem~(\ref{thm:model-existence-extended}), which requires us to define a consistency property.
+    
+    Take the set $\mathscr{S}$ to contain of all finite $\frag^*$-constraint-theories $s$ such that:
+    \begin{itemize}
+    \item Only finitely many of $C$ and $K$ are referenced in $s$, which we denote $\V c_s$ and $\V k_s$ respectively.
+    \item For all $\alpha<\omega_1$, there is an $\frag$-structure $\mathcal M\models T$, tuple $\V b\in M^{\len(\V k_s)}$, and linear-ordered set $\langle A,<\rangle$ with $|A|=\beth_\alpha$ and $A\subseteq M$ such that 
+    \[
+      (\mathcal M,{=}/{\sim},\V a/\V c_s, \V b/\V k_s)\models s\text{ for all $\V a\in[A]^{\len(\V c_s)}$}.
+    \]
+    where we take $(\mathcal M,{=}/{\sim},\V a/\V c_s,\V b/\V k_s)$ to mean the model extending $\mathcal M$ by interpreting the $\sim$ relation as exact equality (1 for equal, 0 for not) and with each element of $\V c_s$ represented by the corresponding element in $\V a$ and similarly for $\V k_s$ and $\V b$.
+    \end{itemize}
+    We claim that $\mathscr{S}$ is a consistency property.
+    The Consistency, $\rightarrow$, $\wedge$, $\forall$, and $\Q$ rules are all proven in the straightforward way.
+    Proving the $\exists$-rule requires taking some unreferenced constant in $K$ to represent an approximate witness, which is relatively standard (and the only reason for the set of constants $K$).
+    \end{proof}
+  \end{lemma}
+  \begin{theorem}
+    Let $T$ be a $\frag$-theory.
+    If for each ordinal $\alpha<\omega_1$ there exists a cardinal $\mu$ such that $T$ admits a model of type $\langle\beth_{\alpha}(\mu),\mu\rangle$, then for any infinite cardinal $\lambda$, $T$ admits a model of type $\langle\lambda,\aleph_0\rangle$.
+    \begin{proof}
+      
+    \end{proof}
+  \end{theorem}
+\section{In Relation to Infinitary Continuous First-Order Logic}
+
+In this section we talk about applications of this paper to \emph{continuous} $[0,1]$-valued logic, but first we start with a definition:
+[TODO:this definition needs to be a lot better/different]
+\begin{definition}
+  A \emph{language} in continuous $[0,1]$-valued logic is the same as for $[0,1]$-valued logic except that for each function symbol $f$ and relation symbol $R$, there are increasing continuous functions $\delta_f$ and $\delta_R$, called \emph{moduli of continuity}, from $(0,1]$ into $(0,1]$ defined in the language itself...
+\end{definition}
+
+...
+\begin{definition}
+  For any $n<\omega$ and tuples of terms $\V x$ and $\V y$ of length $n$, we define the formula $d(\V x, \V y)$ to be shorthand for:
+  \[
+    \bigvee_{i<n}d(x_i, y_i)
+  \]
+\end{definition}
+\begin{definition}
+  We define the theory $T_\text{metric}$ as the three sentences
+  \begin{align*}
+    \forall x\,\neg d(x, x),&&
+    \forall x\forall y\,d(x, y)\to d(y, x),&&
+    \forall x\forall y\forall z\,d(x, z)\to(\neg d(x, y)\to d(y, z)),
+  \end{align*}
+  which correspond respectively to reflexivity, commutativity, and triangle inequality.
+  Note that any structure realizing $T_\text{metric}$ is necessarily a pseudo-metric structure.
+  
+  Define the theory $T_\text{cont}$ as
+  \begin{align*}
+    T_\text{cont}:=\ &T_\text{metric}\\
+    &\cup\Big\{\Big(\rat p\to d(\V x, \V y)\Big)\vee \Big(d(f(\V x), f(\V y))\to\rat q\Big)\where f\in\mathscr F,\ p,q\in\Q\cap(0,1],\ p<\delta_f(q)\}\\
+    &\cup\Big\{\Big(\rat p\to d(\V x, \V y)\Big)\vee \Big(\rat q\to (R(\V x)\to R(\V y))\Big)\where R\in\mathscr R,\ p,q\in\Q\cap(0,1],\ p<\delta_R(q)\}\\
+  \end{align*}
+\end{definition}
+
+  
+  \bibliography{mybib}{}
+  \bibliographystyle{alpha}
+
+%\bibliographystyle{amsplain}
+%\begin{thebibliography}{10}
+%
+%\bibitem {A} T. Aoki, \textit{Calcul exponentiel des op\'erateurs
+%microdifferentiels d'ordre infini.} I, Ann. Inst. Fourier (Grenoble)
+%\textbf{33} (1983), 227--250.
+%
+%\bibitem {B} R. Brown, \textit{On a conjecture of Dirichlet},
+%Amer. Math. Soc., Providence, RI, 1993.
+%
+%\bibitem {D} R. A. DeVore, \textit{Approximation of functions},
+%Proc. Sympos. Appl. Math., vol. 36,
+%Amer. Math. Soc., Providence, RI, 1986, pp. 34--56.
+%
+%\end{thebibliography}
+
+\end{document}
